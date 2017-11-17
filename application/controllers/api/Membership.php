@@ -19,7 +19,7 @@ class Membership extends REST_Controller {
         $membership = $this->post('membership');
         $this->form_validation->set_rules('membership', 'Membership', 'required');
         if ($this->form_validation->run()) {
-			$data = $this->membership_model->get_row(array('membership' => $membership), array('id','name', 'membership','valid_upto'));
+			$data = $this->membership_model->get_row(array('membership' => $membership), array('id','name', 'membership','valid_upto','price'));
 			if($data) {
 				$output['status'] = 'success';
 				$output['status_code'] = '200';
