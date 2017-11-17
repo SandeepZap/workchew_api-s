@@ -1,0 +1,94 @@
+[
+    {
+        "name": "emarref/jwt",
+        "version": "1.0.0",
+        "version_normalized": "1.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/emarref/jwt.git",
+            "reference": "493206630f7f79a3d35a7d5070c01a451408e131"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/emarref/jwt/zipball/493206630f7f79a3d35a7d5070c01a451408e131",
+            "reference": "493206630f7f79a3d35a7d5070c01a451408e131",
+            "shasum": ""
+        },
+        "require": {
+            "php": ">=5.4"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "*"
+        },
+        "suggest": {
+            "ext-openssl": "Enables more token encryption options"
+        },
+        "time": "2015-09-02 21:03:57",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Emarref\\Jwt\\": "src/"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "Malcolm Fell",
+                "email": "emarref@gmail.com"
+            }
+        ],
+        "description": "A JWT implementation"
+    },
+    {
+        "name": "mashape/unirest-php",
+        "version": "v3.0.2",
+        "version_normalized": "3.0.2.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Mashape/unirest-php.git",
+            "reference": "53656bf5197aab3544c04e606196fcd5c5cd02b5"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/Mashape/unirest-php/zipball/53656bf5197aab3544c04e606196fcd5c5cd02b5",
+            "reference": "53656bf5197aab3544c04e606196fcd5c5cd02b5",
+            "shasum": ""
+        },
+        "require": {
+            "ext-curl": "*",
+            "php": ">=5.4.0"
+        },
+        "require-dev": {
+            "codeclimate/php-test-reporter": "0.1.*",
+            "phpunit/phpunit": "~4.4"
+        },
+        "suggest": {
+            "ext-json": "Allows using JSON Bodies for sending and parsing requests"
+        },
+        "time": "2016-04-29 23:54:44",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-0": {
+                "Unirest": "src"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "description": "Unirest PHP",
+        "homepage": "https://github.com/Mashape/unirest-php",
+        "keywords": [
+            "client",
+            "curl",
+            "http",
+            "https",
+            "rest"
+        ]
+    }
+]
