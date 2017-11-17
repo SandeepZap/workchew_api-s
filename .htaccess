@@ -1,4 +1,4 @@
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
+RewriteEngine on
+RewriteBase /
+RewriteCond $1 !^(index\.php|js|css|demo|robots\.txt|assets|uploads)
 RewriteRule ^(.*)$ index.php/$1 [L]
