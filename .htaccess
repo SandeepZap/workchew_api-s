@@ -1,7 +1,4 @@
 RewriteEngine on
-RewriteBase /var/www/html/workchew/
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /var/www/html/workchew/index.php/$1 [L]
-
-
+RewriteBase /
+RewriteCond $1 !^(index\.php|js|css|demo|robots\.txt|assets|uploads)
+RewriteRule ^(.*)$ index.php/$1 [L]
