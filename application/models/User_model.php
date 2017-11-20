@@ -32,5 +32,6 @@ class User_model extends CI_Model {
         $this->db->update('users', $data, $where);
         return $this->db->affected_rows();
     }
+
 }
 ?>
