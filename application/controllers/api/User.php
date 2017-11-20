@@ -132,6 +132,71 @@ class User extends REST_Controller {
 					$this->set_response(array("status" => "failure", "status_code" => "422", "response" => $this->form_validation->error_array()), REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
                 }
 	}
+	
+	/**
+     * User Login using Facebook API
+     * URL : http://localhost/workchew/api/user/facebook_login
+     * METHOD: POST
+     * PARAMS: facebook_token
+     * RETURN: Json response 
+     */
+     
+	public function facebook_login_post(){
+		//~ $insert = array(
+			  //~ 'email' => $this->post('email'),
+			  //~ 'first_name' => $this->post('first_name'),
+			  //~ 'last_name' => $this->post('last_name'),
+			  //~ 'username' => $this->post('username'),
+			  //~ 'uid' => $this->post('uid'),
+			  //~ 'provider' => $this->post('provider')
+			//~ );
+	
+			$add = "EAAD0hkDSBL0BANGl41ZBf0kKtOZATBKVVWRRuItgYgh5uDmqBX9iZB5fAfIubThuw08fsdb5D8xxYgmY2UdyVfBbnBZCx5BzNHFI14TeS0pLksnaAx0IKapeZBaCLwzU1GvEYLYqyuwDSSZB3eLys3Pkdqs21wnDBweSGoOi5Nm5uYp2U3a5NVPeFLdvZBiYUXqgOTJNcP8LPriCLemRvB0JbwbPXhy8CnLvCuFZCK3LAZBdQDoiqj4qoSag7FnTIClllD";
+
+$url="https://graph.facebook.com/164095840998702/?access_token=".urlencode($add);
+			
+$json = file_get_contents($url);
+$response = json_decode($json, TRUE);
+print_r($response);
+
+if($response['id']){
+	echo "yes";
+}else{
+	echo "no";
+}
+	
+				die();
+			//~ //$obj = json_decode($response);
+			//~ 
+			//~ 
+			//~ $result = $this->user_model->signup_user($insert);
+			//~ if ($result) {
+				//~ $id = $this->user_model->facebook_login($this->post('token'));
+				//~ if($id) {
+				//~ $token['id'] = $id;
+				//~ $token['facebook_token'] = $this->post('token');
+				//~ $date = new DateTime();
+				//~ $token['iat'] = $date->getTimestamp();
+				//~ $token['exp'] = $date->getTimestamp() + 60*60*5;
+				//~ $output['id_token'] = JWT::encode($token, "my Secret key!");
+                        //~ $output['status'] = 'success';
+                        //~ $output['status_code'] = '200';
+                        //~ $output['response'] = 'You are Login successfully.';
+                        //~ $this->set_response($output, REST_Controller::HTTP_OK);	
+			//~ } else {
+						//~ $response['status'] = 'failure';
+                        //~ $response['status_code'] = '401';
+                        //~ $response['response'] = 'Login fail';	
+						//~ $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
+			//~ }
+				//~ 
+			//~ }else{
+				//~ $response['status'] = 'failure';
+				//~ $response['status_code'] = '500';
+				//~ $response['response'] = 'Internal server error';	
+				//~ $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
+			//~ }
+	}
     
 }
 ?>
