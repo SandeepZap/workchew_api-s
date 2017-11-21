@@ -10,7 +10,7 @@ class User extends REST_Controller {
 
     /**
      * User Login API
-     * URL : http://localhost/workchew/api/user/login
+     * URL : http://localhost/index.php/workchew/api/user/login
      * METHOD: POST
      * PARAMS: Email, password
      * RETURN: Json response 
@@ -29,24 +29,27 @@ class User extends REST_Controller {
 				$token['iat'] = $date->getTimestamp();
 				$token['exp'] = $date->getTimestamp() + 60*60*5;
 				$output['id_token'] = JWT::encode($token, "my Secret key!");
-                        $output['status'] = 'success';
-                        $output['status_code'] = '200';
-                        $output['response'] = 'You are Login successfully.';
+                        $output['status']['status'] = 'success';
+                        $output['status']['status_code'] = '200';
+                        $output['response']['data'] = 'You are Login successfully.';
                         $this->set_response($output, REST_Controller::HTTP_OK);	
 			} else {
-						$response['status'] = 'failure';
-                        $response['status_code'] = '401';
-                        $response['response'] = 'Login fail';	
+						$response['status']['status'] = 'failure';
+                        $response['status']['status_code'] = '401';
+                        $response['response']["data"] = 'Login fail';	
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 			}
 		}else{
-			   $this->set_response(array("status" => "failure", "status_code" => "422", "response" => $this->form_validation->error_array()), REST_Controller::HTTP_UNPROCESSABLE_ENTITY);		
+						$response['status']['status'] = 'failure';
+                        $response['status']['status_code'] = '422';
+                        $response['response']["data"] = $this->form_validation->error_array();	
+						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 			}
     }
     
     /**
      * User Signup API
-     * URL : http://localhost/workchew/api/user/signup
+     * URL : http://localhost/workchew/index.php/api/user/signup
      * METHOD: POST
      * PARAMS: email, password, first_name ,last_name , username 
      * RETURN: Json response 
@@ -67,18 +70,21 @@ class User extends REST_Controller {
 			);
 			$result = $this->user_model->signup_user($insert);
 						if ($result) {
-							$response['status'] = 'success';
-							$response['status_code'] = '201';
-							$response['response'] = 'You are registered successfully.';
+							$response['status']['status'] = 'success';
+							$response['status']['status_code'] = '201';
+							$response['response']['data'] = 'You are registered successfully.';
 							$this->set_response($response, REST_Controller::HTTP_CREATED);	
 						}else{
-							$response['status'] = 'failure';
-							$response['status_code'] = '500';
-							$response['response'] = 'Internal server error';	
+							$response ['status']['status'] = 'failure';
+							$response['status']['status_code'] = '500';
+							$response['response']['data'] = 'Internal server error';	
 							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
 						}		
 		}else{
-		 $this->set_response(array("status" => "failure", "status_code" => "422", "response" => $this->form_validation->error_array()), REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
+							$response ['status']['status'] = 'failure';
+							$response['status']['status_code'] = '422';
+							$response['response']['data'] = $this->form_validation->error_array();	
+							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 		}
 	}
 	
@@ -111,25 +117,28 @@ class User extends REST_Controller {
                             );
                             $this->load->library('common');
                             $this->common->send_mail($this->post('email'), 'Workchew: Forgot Password', 'forgot-password-email', $data_vars, 'email');
-							$response['status'] = 'success';
-							$response['status_code'] = '200';
-							$response['response'] = 'Please check your email for your password';
+							$response['status']['status'] = 'success';
+							$response['status']['status_code'] = '200';
+							$response['response']['data'] = 'Please check your email for your password';
 							//$response['pass'] = $passwordplain;
 							$this->set_response($response, REST_Controller::HTTP_OK);	
                         } else {
-							$response['status'] = 'fail';
-							$response['status_code'] = '500';
-							$response['response'] = 'Internal server error';
+							$response['status']['status'] = 'fail';
+							$response['status']['status_code'] = '500';
+							$response['response']['data'] = 'Internal server error';
 							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                         }
                     } else {
-							$response['status'] = 'failure';
-							$response['status_code'] = '400';
-							$response['response'] = 'Email not found';	
-							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);	;
+							$response['status']['status'] = 'failure';
+							$response['status']['status_code'] = '400';
+							$response['response']['data'] = 'Email not found';	
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
                     }
                 } else {
-					$this->set_response(array("status" => "failure", "status_code" => "422", "response" => $this->form_validation->error_array()), REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
+							$response['status']['status'] = 'failure';
+							$response['status']['status_code'] = '422';
+							$response['response']['data'] = $this->form_validation->error_array();	
+							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
                 }
 	}
 	
@@ -164,9 +173,9 @@ class User extends REST_Controller {
 							$token['iat'] = $date->getTimestamp();
 							$token['exp'] = $date->getTimestamp() + 60*60*5;
 							$output['id_token'] = JWT::encode($token, "my Secret key!");
-							$output['status'] = 'success';
-							$output['status_code'] = '200';
-							$output['response'] = 'You are Login successfully.';
+							$output['status']['status'] = 'success';
+							$output['status']['status_code'] = '200';
+							$output['response']['data'] = 'You are Login successfully.';
 							$this->set_response($output, REST_Controller::HTTP_OK);	
 					 
 						}else{
@@ -188,28 +197,28 @@ class User extends REST_Controller {
 									$token['iat'] = $date->getTimestamp();
 									$token['exp'] = $date->getTimestamp() + 60*60*5;
 									$output['id_token'] = JWT::encode($token, "my Secret key!");
-									$output['status'] = 'success';
-									$output['status_code'] = '200';
-									$output['response'] = 'You are Login successfully.';
+									$output['status']['status'] = 'success';
+									$output['status']['status_code'] = '200';
+									$output['response']['data'] = 'You are Login successfully.';
 									$this->set_response($output, REST_Controller::HTTP_OK);	
 								} else {
-									$response['status'] = 'failure';
-									$response['status_code'] = '401';
-									$response['response'] = 'Login fail';	
+									$response['status']['status'] = 'failure';
+									$response['status']['status_code'] = '401';
+									$response['response']['data'] = 'Login fail';	
 									$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 								}
 				
 						}else{
-								$response['status'] = 'failure';
+								$response['status']['status'] = 'failure';
 								$response['status_code'] = '500';
-								$response['response'] = 'Internal server error';	
+								$response['response']['data'] = 'Internal server error';	
 								$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
 						} 
 						}
 					}else{
-						$response['status'] = 'failure';
-                        $response['status_code'] = '401';
-                        $response['response'] = 'Unautorized user';	
+						$response['status']['status'] = 'failure';
+                        $response['status']['status_code'] = '401';
+                        $response['response']['data'] = 'Unautorized user';	
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
 					}		
 			}
