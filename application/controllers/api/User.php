@@ -147,14 +147,14 @@ class User extends REST_Controller {
 	}
 	
 	/**
-     * User Login using Facebook API
-     * URL : http://localhost/workchew/api/user/facebook_login
+     * User Login using social API
+     * URL : http://localhost/workchew/index.php/api/user/social_login
      * METHOD: POST
      * PARAMS: facebook_token
      * RETURN: Json response 
      */
      
-	public function facebook_login_post(){		
+	public function social_login_post(){		
 		if($this->post('provider') == 'facebook'){	
 //$access_token= "EAAD0hkDSBL0BANGl41ZBf0kKtOZATBKVVWRRuItgYgh5uDmqBX9iZB5fAfIubThuw08fsdb5D8xxYgmY2UdyVfBbnBZCx5BzNHFI14TeS0pLksnaAx0IKapeZBaCLwzU1GvEYLYqyuwDSSZB3eLys3Pkdqs21wnDBweSGoOi5Nm5uYp2U3a5NVPeFLdvZBiYUXqgOTJNcP8LPriCLemRvB0JbwbPXhy8CnLvCuFZCK3LAZBdQDoiqj4qoSag7FnTIC6EZD";
 	//		$uid = "164095840998702";
@@ -227,7 +227,133 @@ class User extends REST_Controller {
                         $response['message'] = 'Unautorized user';	
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
 					}		
-			}
+			} else if($this->post('provider') == 'twitter'){           
+                $username =  $this->post('username');
+                $url = "https://twitter.com/".$username;
+                $contents = @file_get_contents($url);
+                if ($contents) {
+                    $get_user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
+                    if(!empty($get_user)){     
+                            $token['id'] = $get_user->id;
+                            $date = new DateTime();
+                            $token['iat'] = $date->getTimestamp();
+                            $token['exp'] = $date->getTimestamp() + 60*60*5;
+                            $output['id_token'] = JWT::encode($token, "my Secret key!");
+                            $output['status'] = 'success';
+                            $output['status_code'] = '200';
+                            $output['response'] = 'You are Login successfully.';
+                            $this->set_response($output, REST_Controller::HTTP_OK);   
+                    }else{
+                            $insert = array(
+                              'username' => $this->post('username'),
+                              'email' => $this->post('email'),
+                              'provider' => $this->post('provider')
+                            );
+                            $result = $this->user_model->signup_user($insert);
+                            if ($result) {
+                                $user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
+                                    if(!empty($user)){     
+                                        $token['id'] = $user->id;
+                                        $token['uid'] = $user->uid;
+                                        $date = new DateTime();
+                                        $token['iat'] = $date->getTimestamp();
+                                        $token['exp'] = $date->getTimestamp() + 60*60*5;
+                                        $output['id_token'] = JWT::encode($token, "my Secret key!");
+                                        $output['status'] = 'success';
+                                        $output['status_code'] = '200';
+                                        $output['response'] = 'You are Login successfully.';
+                                        $this->set_response($output, REST_Controller::HTTP_OK);   
+                                    } else {
+                                        $response['status'] = 'failure';
+                                        $response['status_code'] = '401';
+                                        $response['response'] = 'Login fail';   
+                                        $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
+                                    }
+                   
+                            }else{
+                                    $response['status'] = 'failure';
+                                    $response['status_code'] = '500';
+                                    $response['response'] = 'Internal server error';   
+                                    $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
+                            }
+                    }
+                } else {
+                    $response['status'] = 'failure';
+                    $response['status_code'] = '401';
+                    $response['response'] = 'Login fail';   
+                    $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);           
+                }    
+            } else if($this->post('provider') == 'linkedin'){
+                $url="https://api.linkedin.com/v1/people/~?format=json";
+                $access_token = $this->post('access_token');
+                $opts = array(
+                    'http'=>array(
+                        'ignore_errors' => TRUE,
+                        'method'=>"GET",
+                        'header'=>"Authorization: Bearer ". $access_token."\r\n" ."x-li-src: msdk\r\n"
+                    )
+                );
+                $context = stream_context_create($opts);
+                $json = file_get_contents($url, false, $context);
+                $response = json_decode($json, TRUE);
+                if(isset($response['id'])){
+                    $get_user = $this->user_model->get_row(array('uid' => $response['id']), array('first_name', 'last_name' ,'id','uid'));
+                        if(!empty($get_user)){     
+                            $token['id'] = $get_user->id;
+                            $token['uid'] = $get_user->uid;
+                            $date = new DateTime();
+                            $token['iat'] = $date->getTimestamp();
+                            $token['exp'] = $date->getTimestamp() + 60*60*5;
+                            $output['id_token'] = JWT::encode($token, "my Secret key!");
+                            $output['status'] = 'success';
+                            $output['status_code'] = '200';
+                            $output['response'] = 'You are Login successfully.';
+                            $this->set_response($output, REST_Controller::HTTP_OK);   
+                     
+                        }else{
+                            $insert = array(
+                              'email' => $this->post('email'),
+                              'first_name' => $this->post('first_name'),
+                              'last_name' => $this->post('last_name'),
+                              'username' => $this->post('username'),
+                              'uid' => $this->post('id'),
+                              'provider' => $this->post('provider')
+                            );
+                     $result = $this->user_model->signup_user($insert);
+                        if ($result) {
+                            $user = $this->user_model->get_row(array('uid' => $this->post('id')), array('first_name', 'last_name' ,'id','uid'));
+                                if(!empty($user)){     
+                                    $token['id'] = $user->id;
+                                    $token['uid'] = $user->uid;
+                                    $date = new DateTime();
+                                    $token['iat'] = $date->getTimestamp();
+                                    $token['exp'] = $date->getTimestamp() + 60*60*5;
+                                    $output['id_token'] = JWT::encode($token, "my Secret key!");
+                                    $output['status'] = 'success';
+                                    $output['status_code'] = '200';
+                                    $output['response'] = 'You are Login successfully.';
+                                    $this->set_response($output, REST_Controller::HTTP_OK);   
+                                } else {
+                                    $response['status'] = 'failure';
+                                    $response['status_code'] = '401';
+                                    $response['response'] = 'Login fail';   
+                                    $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
+                                }
+               
+                        }else{
+                                $response['status'] = 'failure';
+                                $response['status_code'] = '500';
+                                $response['response'] = 'Internal server error';   
+                                $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
+                        }
+                        }
+                    }else{
+                        $response['status'] = 'failure';
+                        $response['status_code'] = '401';
+                        $response['response'] = 'Unautorized user';   
+                        $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
+                    }       
+        }    
     
 		}
 }
