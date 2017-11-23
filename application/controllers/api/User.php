@@ -239,9 +239,10 @@ class User extends REST_Controller {
                             $token['iat'] = $date->getTimestamp();
                             $token['exp'] = $date->getTimestamp() + 60*60*5;
                             $output['id_token'] = JWT::encode($token, "my Secret key!");
-                            $output['status'] = 'success';
-                            $output['status_code'] = '200';
-                            $output['response'] = 'You are Login successfully.';
+                            $output['status']['status'] = 'success';
+                            $output['status']['status_code'] = '200';
+                            $output['message'] = 'You are Login successfully.';
+                            $output['response']['data'] = $get_user;
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                     }else{
                             $insert = array(
@@ -259,28 +260,29 @@ class User extends REST_Controller {
                                         $token['iat'] = $date->getTimestamp();
                                         $token['exp'] = $date->getTimestamp() + 60*60*5;
                                         $output['id_token'] = JWT::encode($token, "my Secret key!");
-                                        $output['status'] = 'success';
-                                        $output['status_code'] = '200';
-                                        $output['response'] = 'You are Login successfully.';
+                                        $output['status']['status'] = 'success';
+                                        $output['status']['status_code'] = '200';
+                                        $output['message'] = 'You are Login successfully.';
+                                        $output['response']['data'] = $user;
                                         $this->set_response($output, REST_Controller::HTTP_OK);   
                                     } else {
-                                        $response['status'] = 'failure';
-                                        $response['status_code'] = '401';
-                                        $response['response'] = 'Login fail';   
+                                        $response['status']['status'] = 'failure';
+                                        $response['status']['status_code'] = '401';
+                                        $response['message'] = 'Login fail';   
                                         $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                     }
                    
                             }else{
-                                    $response['status'] = 'failure';
-                                    $response['status_code'] = '500';
-                                    $response['response'] = 'Internal server error';   
+                                    $response['status']['status'] = 'failure';
+                                    $response['status']['status_code'] = '500';
+                                    $response['message'] = 'Internal server error';   
                                     $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
                             }
                     }
                 } else {
-                    $response['status'] = 'failure';
-                    $response['status_code'] = '401';
-                    $response['response'] = 'Login fail';   
+                    $response['status']['status'] = 'failure';
+                    $response['status']['status_code'] = '401';
+                    $response['message'] = 'Login fail';   
                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);           
                 }    
             } else if($this->post('provider') == 'linkedin'){
@@ -305,9 +307,10 @@ class User extends REST_Controller {
                             $token['iat'] = $date->getTimestamp();
                             $token['exp'] = $date->getTimestamp() + 60*60*5;
                             $output['id_token'] = JWT::encode($token, "my Secret key!");
-                            $output['status'] = 'success';
-                            $output['status_code'] = '200';
-                            $output['response'] = 'You are Login successfully.';
+                            $output['status']['status'] = 'success';
+                            $output['status']['status_code'] = '200';
+                            $output['message'] = 'You are Login successfully.';
+                            $output['response']['data'] = $get_user;
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                      
                         }else{
@@ -329,28 +332,29 @@ class User extends REST_Controller {
                                     $token['iat'] = $date->getTimestamp();
                                     $token['exp'] = $date->getTimestamp() + 60*60*5;
                                     $output['id_token'] = JWT::encode($token, "my Secret key!");
-                                    $output['status'] = 'success';
-                                    $output['status_code'] = '200';
-                                    $output['response'] = 'You are Login successfully.';
+                                    $output['status']['status'] = 'success';
+                                    $output['status']['status_code'] = '200';
+                                    $output['message'] = 'You are Login successfully.';
+                                    $output['response']['data'] = $user;
                                     $this->set_response($output, REST_Controller::HTTP_OK);   
                                 } else {
-                                    $response['status'] = 'failure';
-                                    $response['status_code'] = '401';
-                                    $response['response'] = 'Login fail';   
+                                    $response['status']['status'] = 'failure';
+                                    $response['status']['status_code'] = '401';
+                                    $response['message'] = 'Login fail';   
                                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                 }
                
                         }else{
-                                $response['status'] = 'failure';
-                                $response['status_code'] = '500';
-                                $response['response'] = 'Internal server error';   
+                                $response['status']['status'] = 'failure';
+                                $response['status']['status_code'] = '500';
+                                $response['message'] = 'Internal server error';   
                                 $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
                         }
                         }
                     }else{
-                        $response['status'] = 'failure';
-                        $response['status_code'] = '401';
-                        $response['response'] = 'Unautorized user';   
+                        $response['status']['status'] = 'failure';
+                        $response['status']['status_code'] = '401';
+                        $response['message'] = 'Unautorized user';   
                         $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
                     }       
         }    
