@@ -25,7 +25,7 @@ class User_model extends CI_Model {
 	}
 	
 	public function get_row($where = array(), $select = '*') {
-        return $this->db->select($select)->where($where)->get('users')->row();
+        return $this->db->select($select)->where($where)->get('users')->row_array();
     }
     
      public function update($data, $where) {

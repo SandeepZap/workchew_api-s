@@ -28,12 +28,12 @@ class User extends REST_Controller {
 				$token['email'] = $email;
 				$date = new DateTime();
 				$token['iat'] = $date->getTimestamp();
-				$token['exp'] = $date->getTimestamp() + 60*60*5;
-				$output['id_token'] = JWT::encode($token, "my Secret key!");
+				//$token['exp'] = $date->getTimestamp() + 60*60*5;
                         $output['status']['status'] = 'success';
                         $output['status']['status_code'] = '200';
                         $output['message'] = 'You are Login successfully.';
                         $output['response']['data'] = $user;
+                        $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                         $this->set_response($output, REST_Controller::HTTP_OK);	
 			} else {
 						$response['status']['status'] = 'failure';
@@ -175,12 +175,12 @@ class User extends REST_Controller {
 							$token['uid'] = $get_user->uid;
 							$date = new DateTime();
 							$token['iat'] = $date->getTimestamp();
-							$token['exp'] = $date->getTimestamp() + 60*60*5;
-							$output['id_token'] = JWT::encode($token, "my Secret key!");
+					//		$token['exp'] = $date->getTimestamp() + 60*60*5;
 							$output['status']['status'] = 'success';
 							$output['status']['status_code'] = '200';
 							$output['message'] = 'You are Login successfully.';
 							$output['response']['data'] = $get_user;
+							$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
 							$this->set_response($output, REST_Controller::HTTP_OK);	
 					 
 						}else{
@@ -200,12 +200,12 @@ class User extends REST_Controller {
 									$token['uid'] = $user->uid;
 									$date = new DateTime();
 									$token['iat'] = $date->getTimestamp();
-									$token['exp'] = $date->getTimestamp() + 60*60*5;
-									$output['id_token'] = JWT::encode($token, "my Secret key!");
+						//			$token['exp'] = $date->getTimestamp() + 60*60*5;
 									$output['status']['status'] = 'success';
 									$output['status']['status_code'] = '200';
 									$output['message'] = 'You are Login successfully.';
 									$output['response']['data'] = $user;
+									$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
 									$this->set_response($output, REST_Controller::HTTP_OK);	
 								} else {
 									$response['status']['status'] = 'failure';
@@ -237,12 +237,12 @@ class User extends REST_Controller {
                             $token['id'] = $get_user->id;
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
-                            $token['exp'] = $date->getTimestamp() + 60*60*5;
-                            $output['id_token'] = JWT::encode($token, "my Secret key!");
+                          //  $token['exp'] = $date->getTimestamp() + 60*60*5;
                             $output['status']['status'] = 'success';
                             $output['status']['status_code'] = '200';
                             $output['message'] = 'You are Login successfully.';
                             $output['response']['data'] = $get_user;
+                            $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                     }else{
                             $insert = array(
@@ -258,12 +258,12 @@ class User extends REST_Controller {
                                         $token['uid'] = $user->uid;
                                         $date = new DateTime();
                                         $token['iat'] = $date->getTimestamp();
-                                        $token['exp'] = $date->getTimestamp() + 60*60*5;
-                                        $output['id_token'] = JWT::encode($token, "my Secret key!");
+                            //            $token['exp'] = $date->getTimestamp() + 60*60*5;
                                         $output['status']['status'] = 'success';
                                         $output['status']['status_code'] = '200';
                                         $output['message'] = 'You are Login successfully.';
                                         $output['response']['data'] = $user;
+                                        $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                                         $this->set_response($output, REST_Controller::HTTP_OK);   
                                     } else {
                                         $response['status']['status'] = 'failure';
@@ -305,12 +305,12 @@ class User extends REST_Controller {
                             $token['uid'] = $get_user->uid;
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
-                            $token['exp'] = $date->getTimestamp() + 60*60*5;
-                            $output['id_token'] = JWT::encode($token, "my Secret key!");
+                            //$token['exp'] = $date->getTimestamp() + 60*60*5;
                             $output['status']['status'] = 'success';
                             $output['status']['status_code'] = '200';
                             $output['message'] = 'You are Login successfully.';
                             $output['response']['data'] = $get_user;
+                            $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                      
                         }else{
@@ -330,12 +330,12 @@ class User extends REST_Controller {
                                     $token['uid'] = $user->uid;
                                     $date = new DateTime();
                                     $token['iat'] = $date->getTimestamp();
-                                    $token['exp'] = $date->getTimestamp() + 60*60*5;
-                                    $output['id_token'] = JWT::encode($token, "my Secret key!");
+                              //      $token['exp'] = $date->getTimestamp() + 60*60*5;
                                     $output['status']['status'] = 'success';
                                     $output['status']['status_code'] = '200';
                                     $output['message'] = 'You are Login successfully.';
                                     $output['response']['data'] = $user;
+                                    $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                                     $this->set_response($output, REST_Controller::HTTP_OK);   
                                 } else {
                                     $response['status']['status'] = 'failure';
