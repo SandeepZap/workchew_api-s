@@ -38,7 +38,7 @@ class User extends REST_Controller {
 			} else {
 						$response['status']['status'] = 'failure';
                         $response['status']['status_code'] = '401';
-                        $response['message'] = 'Login fail';	
+                        $response['message'] = 'Invalid credentials';	
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 			}
 		}else{
@@ -210,7 +210,7 @@ class User extends REST_Controller {
 								} else {
 									$response['status']['status'] = 'failure';
 									$response['status']['status_code'] = '401';
-									$response['message'] = 'Login fail';	
+									$response['message'] = 'Invalid credentials';	
 									$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 								}
 				
@@ -268,7 +268,7 @@ class User extends REST_Controller {
                                     } else {
                                         $response['status']['status'] = 'failure';
                                         $response['status']['status_code'] = '401';
-                                        $response['message'] = 'Login fail';   
+                                        $response['message'] = 'Invalid credentials';   
                                         $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                     }
                    
@@ -282,7 +282,7 @@ class User extends REST_Controller {
                 } else {
                     $response['status']['status'] = 'failure';
                     $response['status']['status_code'] = '401';
-                    $response['message'] = 'Login fail';   
+                    $response['message'] = 'Invalid credentials';   
                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);           
                 }    
             } else if($this->post('provider') == 'linkedin'){
@@ -340,7 +340,7 @@ class User extends REST_Controller {
                                 } else {
                                     $response['status']['status'] = 'failure';
                                     $response['status']['status_code'] = '401';
-                                    $response['message'] = 'Login fail';   
+                                    $response['message'] = 'Invalid credentials';   
                                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                 }
                
