@@ -115,7 +115,7 @@ class User extends REST_Controller {
                                 ), array('email' =>  $this->post('email')));
                         if ($saved) {
                             $data_vars = array(
-                                'first_name' => $user->first_name,
+                                'first_name' => $user['first_name'],
                                 'email' => $this->post('email'),
                                 'password' => $passwordplain
                             );
@@ -171,8 +171,8 @@ class User extends REST_Controller {
 				if(isset($response['id'])){
 					$get_user = $this->user_model->get_row(array('uid' => $this->post('uid')), array('first_name', 'last_name' ,'id','uid'));
 						if(!empty($get_user)){	 
-							$token['id'] = $get_user->id;
-							$token['uid'] = $get_user->uid;
+							$token['id'] = $get_user['id'];
+							$token['uid'] = $get_user['uid'];
 							$date = new DateTime();
 							$token['iat'] = $date->getTimestamp();
 					//		$token['exp'] = $date->getTimestamp() + 60*60*5;
@@ -196,8 +196,8 @@ class User extends REST_Controller {
 						if ($result) {
 							$user = $this->user_model->get_row(array('uid' => $this->post('uid')), array('first_name', 'last_name' ,'id','uid'));
 								if(!empty($user)){	 
-									$token['id'] = $user->id;
-									$token['uid'] = $user->uid;
+									$token['id'] = $user['id'];
+									$token['uid'] = $user['uid'];
 									$date = new DateTime();
 									$token['iat'] = $date->getTimestamp();
 						//			$token['exp'] = $date->getTimestamp() + 60*60*5;
@@ -234,7 +234,7 @@ class User extends REST_Controller {
                 if ($contents) {
                     $get_user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
                     if(!empty($get_user)){     
-                            $token['id'] = $get_user->id;
+                            $token['id'] = $get_user['id'];
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
                           //  $token['exp'] = $date->getTimestamp() + 60*60*5;
@@ -254,8 +254,8 @@ class User extends REST_Controller {
                             if ($result) {
                                 $user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
                                     if(!empty($user)){     
-                                        $token['id'] = $user->id;
-                                        $token['uid'] = $user->uid;
+                                        $token['id'] = $user['id'];
+                                        $token['uid'] = $user['uid'];
                                         $date = new DateTime();
                                         $token['iat'] = $date->getTimestamp();
                             //            $token['exp'] = $date->getTimestamp() + 60*60*5;
@@ -301,8 +301,8 @@ class User extends REST_Controller {
                 if(isset($response['id'])){
                     $get_user = $this->user_model->get_row(array('uid' => $response['id']), array('first_name', 'last_name' ,'id','uid'));
                         if(!empty($get_user)){     
-                            $token['id'] = $get_user->id;
-                            $token['uid'] = $get_user->uid;
+                            $token['id'] = $get_user['id'];
+                            $token['uid'] = $get_user['uid'];
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
                             //$token['exp'] = $date->getTimestamp() + 60*60*5;
@@ -326,8 +326,8 @@ class User extends REST_Controller {
                         if ($result) {
                             $user = $this->user_model->get_row(array('uid' => $this->post('id')), array('first_name', 'last_name' ,'id','uid'));
                                 if(!empty($user)){     
-                                    $token['id'] = $user->id;
-                                    $token['uid'] = $user->uid;
+                                    $token['id'] = $user['id'];
+                                    $token['uid'] = $user['uid'];
                                     $date = new DateTime();
                                     $token['iat'] = $date->getTimestamp();
                               //      $token['exp'] = $date->getTimestamp() + 60*60*5;
