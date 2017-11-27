@@ -5,6 +5,7 @@ use \Firebase\JWT\JWT;
 class User extends REST_Controller {
     public function __construct() {
         parent::__construct();
+        $this->lang->load('english_lang', 'english');
         $this->load->model('user_model');
     }
 
@@ -16,11 +17,11 @@ class User extends REST_Controller {
      * RETURN: Json response 
      */
     public function login_post() {
-        $email = $this->post('email');
-        $password = md5($this->post('password'));
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'required');
         if ($this->form_validation->run()) {
+			$email = $this->post('email');
+			$password = md5($this->post('password'));
 			$id = $this->user_model->login($email,$password);
 			if($id) {
 				$user = $this->user_model->get_row(array('id' => $id), array('first_name', 'last_name' ,'id','email','username'));
@@ -28,22 +29,21 @@ class User extends REST_Controller {
 				$token['email'] = $email;
 				$date = new DateTime();
 				$token['iat'] = $date->getTimestamp();
-				//$token['exp'] = $date->getTimestamp() + 60*60*5;
-                        $output['status']['status'] = 'success';
-                        $output['status']['status_code'] = '200';
-                        $output['message'] = 'You are Login successfully.';
+                        $output['status']['status'] = $this->lang->line('success_status');
+                        $output['status']['status_code'] = $this->lang->line('code_200');
+                        $output['message'] =  $this->lang->line('login_successfull');
                         $output['response']['data'] = $user;
                         $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                         $this->set_response($output, REST_Controller::HTTP_OK);	
 			} else {
-						$response['status']['status'] = 'failure';
-                        $response['status']['status_code'] = '401';
-                        $response['message'] = 'Invalid credentials';	
+						$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_401');
+                        $response['message'] = $this->lang->line('Invalid');
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 			}
 		}else{
-						$response['status']['status'] = 'failure';
-                        $response['status']['status_code'] = '422';
+						$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_422');
                         $response['message']["data"] = $this->form_validation->error_array();	
 						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 			}
@@ -73,20 +73,20 @@ class User extends REST_Controller {
 			$result = $this->user_model->signup_user($insert);
 						if ($result) {
 							$user = $this->user_model->get_row(array('id' => $result), array('first_name', 'last_name' ,'id','email','username'));
-							$response['status']['status'] = 'success';
-							$response['status']['status_code'] = '201';
-							$response['message'] = 'You are registered successfully.';
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_201');
+							$response['message'] = $this->lang->line('register_successfull');
 							$response['response']['data'] = $user;
 							$this->set_response($response, REST_Controller::HTTP_CREATED);	
 						}else{
-							$response ['status']['status'] = 'failure';
-							$response['status']['status_code'] = '500';
-							$response['message'] = 'Internal server error';	
+							$response ['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_500');
+							$response['message'] = $this->lang->line('Internal_server_error');
 							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
 						}		
 		}else{
-							$response ['status']['status'] = 'failure';
-							$response['status']['status_code'] = '422';
+							$response ['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_422');
 							$response['message']['data'] = $this->form_validation->error_array();	
 							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 		}
@@ -120,27 +120,32 @@ class User extends REST_Controller {
                                 'password' => $passwordplain
                             );
                             $this->load->library('common');
-                            $this->common->send_mail($this->post('email'), 'Workchew: Forgot Password', 'forgot-password-email', $data_vars, 'email');
-							$response['status']['status'] = 'success';
-							$response['status']['status_code'] = '200';
-							$response['message'] = 'Please check your email for your password';
-							//$response['pass'] = $passwordplain;
-							$this->set_response($response, REST_Controller::HTTP_OK);	
+                            if($this->common->send_mail($this->post('email'), 'Workchew: Forgot Password', 'forgot-password-email', $data_vars, 'email')){
+								$response['status']['status'] = $this->lang->line('success_status');
+								$response['status']['status_code'] = $this->lang->line('code_200');
+								$response['message'] = 'Please check your email for your password';
+								$this->set_response($response, REST_Controller::HTTP_OK);
+							}else{
+								$response['status']['status'] = $this->lang->line('failure_status');
+								$response['status']['status_code'] =  $this->lang->line('code_500');
+								$response['message'] = 'Email not Sent';
+								$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+							}	
                         } else {
-							$response['status']['status'] = 'fail';
-							$response['status']['status_code'] = '500';
-							$response['message'] = 'Internal server error';
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_500');
+							$response['message'] = $this->lang->line('Internal_server_error');
 							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
                         }
                     } else {
-							$response['status']['status'] = 'failure';
-							$response['status']['status_code'] = '400';
-							$response['message'] = 'Email not found';	
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('Not_found');
 							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
                     }
                 } else {
-							$response['status']['status'] = 'failure';
-							$response['status']['status_code'] = '422';
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_422');
 							$response['message']['data'] = $this->form_validation->error_array();	
 							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
                 }
@@ -154,13 +159,16 @@ class User extends REST_Controller {
      * RETURN: Json response 
      */
      
-	public function social_login_post(){		
+	public function social_login_post(){
+	$this->form_validation->set_rules('provider', 'Provider', 'required');	
+    if ($this->form_validation->run()) {		
 		if($this->post('provider') == 'facebook'){	
-//$access_token= "EAAD0hkDSBL0BANGl41ZBf0kKtOZATBKVVWRRuItgYgh5uDmqBX9iZB5fAfIubThuw08fsdb5D8xxYgmY2UdyVfBbnBZCx5BzNHFI14TeS0pLksnaAx0IKapeZBaCLwzU1GvEYLYqyuwDSSZB3eLys3Pkdqs21wnDBweSGoOi5Nm5uYp2U3a5NVPeFLdvZBiYUXqgOTJNcP8LPriCLemRvB0JbwbPXhy8CnLvCuFZCK3LAZBdQDoiqj4qoSag7FnTIC6EZD";
-	//		$uid = "164095840998702";
+			/*
+			* Login using facebook 
+			*/
 			$access_token = $this->post('access_token');
 			$uid = $this->post('uid');
-			$url="https://graph.facebook.com/".$uid."/?access_token=".urlencode($access_token);
+			$url= FACEBOOK_URL.$uid."/?access_token=".urlencode($access_token);
 			$opts = array(
 				'http' => array('ignore_errors' => true)
 					);
@@ -175,10 +183,9 @@ class User extends REST_Controller {
 							$token['uid'] = $get_user['uid'];
 							$date = new DateTime();
 							$token['iat'] = $date->getTimestamp();
-					//		$token['exp'] = $date->getTimestamp() + 60*60*5;
-							$output['status']['status'] = 'success';
-							$output['status']['status_code'] = '200';
-							$output['message'] = 'You are Login successfully.';
+							$output['status']['status'] = $this->lang->line('success_status');
+							$output['status']['status_code'] = $this->lang->line('code_200');
+							$output['message'] =  $this->lang->line('login_successfull');
 							$output['response']['data'] = $get_user;
 							$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
 							$this->set_response($output, REST_Controller::HTTP_OK);	
@@ -200,36 +207,38 @@ class User extends REST_Controller {
 									$token['uid'] = $user['uid'];
 									$date = new DateTime();
 									$token['iat'] = $date->getTimestamp();
-						//			$token['exp'] = $date->getTimestamp() + 60*60*5;
-									$output['status']['status'] = 'success';
-									$output['status']['status_code'] = '200';
-									$output['message'] = 'You are Login successfully.';
+									$output['status']['status'] = $this->lang->line('success_status');
+									$output['status']['status_code'] = $this->lang->line('code_200');
+									$output['message'] =  $this->lang->line('login_successfull');
 									$output['response']['data'] = $user;
 									$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
 									$this->set_response($output, REST_Controller::HTTP_OK);	
 								} else {
-									$response['status']['status'] = 'failure';
-									$response['status']['status_code'] = '401';
-									$response['message'] = 'Invalid credentials';	
+									$response['status']['status'] = $this->lang->line('failure_status');
+									$response['status']['status_code'] = $this->lang->line('code_401');
+									$response['message'] = $this->lang->line('Invalid');
 									$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 								}
 				
 						}else{
-								$response['status']['status'] = 'failure';
-								$response['status_code'] = '500';
-								$response['message'] = 'Internal server error';	
+								$response['status']['status'] = $this->lang->line('failure_status');
+								$response['status_code'] = $this->lang->line('code_500');
+								$response['message'] = $this->lang->line('Internal_server_error');
 								$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
 						} 
 						}
 					}else{
-						$response['status']['status'] = 'failure';
-                        $response['status']['status_code'] = '401';
-                        $response['message'] = 'Unautorized user';	
+						$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_401');
+                        $response['message'] = $this->lang->line('Unautorized_user'); 
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
 					}		
-			} else if($this->post('provider') == 'twitter'){           
+			} else if($this->post('provider') == 'twitter'){ 
+				/*
+				* Login using Twitter
+				*/            
                 $username =  $this->post('username');
-                $url = "https://twitter.com/".$username;
+                $url = TWITTER_URL.$username;
                 $contents = @file_get_contents($url);
                 if ($contents) {
                     $get_user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
@@ -237,10 +246,9 @@ class User extends REST_Controller {
                             $token['id'] = $get_user['id'];
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
-                          //  $token['exp'] = $date->getTimestamp() + 60*60*5;
-                            $output['status']['status'] = 'success';
-                            $output['status']['status_code'] = '200';
-                            $output['message'] = 'You are Login successfully.';
+                            $output['status']['status'] = $this->lang->line('success_status');
+                            $output['status']['status_code'] = $this->lang->line('code_200');
+                            $output['message'] =  $this->lang->line('login_successfull');
                             $output['response']['data'] = $get_user;
                             $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                             $this->set_response($output, REST_Controller::HTTP_OK);   
@@ -258,35 +266,37 @@ class User extends REST_Controller {
                                         $token['uid'] = $user['uid'];
                                         $date = new DateTime();
                                         $token['iat'] = $date->getTimestamp();
-                            //            $token['exp'] = $date->getTimestamp() + 60*60*5;
-                                        $output['status']['status'] = 'success';
-                                        $output['status']['status_code'] = '200';
-                                        $output['message'] = 'You are Login successfully.';
+                                        $output['status']['status'] = $this->lang->line('success_status');
+                                        $output['status']['status_code'] = $this->lang->line('code_200');
+                                        $output['message'] =  $this->lang->line('login_successfull');
                                         $output['response']['data'] = $user;
                                         $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                                         $this->set_response($output, REST_Controller::HTTP_OK);   
                                     } else {
-                                        $response['status']['status'] = 'failure';
-                                        $response['status']['status_code'] = '401';
-                                        $response['message'] = 'Invalid credentials';   
+                                        $response['status']['status'] = $this->lang->line('failure_status');
+                                        $response['status']['status_code'] = $this->lang->line('code_401');
+                                        $response['message'] = $this->lang->line('Invalid');
                                         $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                     }
                    
                             }else{
-                                    $response['status']['status'] = 'failure';
-                                    $response['status']['status_code'] = '500';
-                                    $response['message'] = 'Internal server error';   
+                                    $response['status']['status'] = $this->lang->line('failure_status');
+                                    $response['status']['status_code'] = $this->lang->line('code_500');
+                                    $response['message'] = $this->lang->line('Internal_server_error'); 
                                     $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
                             }
                     }
                 } else {
-                    $response['status']['status'] = 'failure';
-                    $response['status']['status_code'] = '401';
-                    $response['message'] = 'Invalid credentials';   
+                    $response['status']['status'] = $this->lang->line('failure_status');
+                    $response['status']['status_code'] = $this->lang->line('code_401');
+                    $response['message'] = $this->lang->line('Invalid');
                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);           
                 }    
             } else if($this->post('provider') == 'linkedin'){
-                $url="https://api.linkedin.com/v1/people/~?format=json";
+				/*
+				* Login using Linkedin
+				*/
+                $url= LINKEDIN_URL;
                 $access_token = $this->post('access_token');
                 $opts = array(
                     'http'=>array(
@@ -305,10 +315,9 @@ class User extends REST_Controller {
                             $token['uid'] = $get_user['uid'];
                             $date = new DateTime();
                             $token['iat'] = $date->getTimestamp();
-                            //$token['exp'] = $date->getTimestamp() + 60*60*5;
-                            $output['status']['status'] = 'success';
-                            $output['status']['status_code'] = '200';
-                            $output['message'] = 'You are Login successfully.';
+                            $output['status']['status'] = $this->lang->line('success_status');
+                            $output['status']['status_code'] = $this->lang->line('code_200');
+                            $output['message'] = $this->lang->line('login_successfull');
                             $output['response']['data'] = $get_user;
                             $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                             $this->set_response($output, REST_Controller::HTTP_OK);   
@@ -330,34 +339,39 @@ class User extends REST_Controller {
                                     $token['uid'] = $user['uid'];
                                     $date = new DateTime();
                                     $token['iat'] = $date->getTimestamp();
-                              //      $token['exp'] = $date->getTimestamp() + 60*60*5;
-                                    $output['status']['status'] = 'success';
-                                    $output['status']['status_code'] = '200';
-                                    $output['message'] = 'You are Login successfully.';
+                                    $output['status']['status'] = $this->lang->line('success_status');
+                                    $output['status']['status_code'] = $this->lang->line('code_200');
+                                    $output['message'] =  $this->lang->line('login_successfull');
                                     $output['response']['data'] = $user;
                                     $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
                                     $this->set_response($output, REST_Controller::HTTP_OK);   
                                 } else {
-                                    $response['status']['status'] = 'failure';
-                                    $response['status']['status_code'] = '401';
-                                    $response['message'] = 'Invalid credentials';   
+                                    $response['status']['status'] = $this->lang->line('failure_status');
+                                    $response['status']['status_code'] = $this->lang->line('code_401');
+                                    $response['message'] = $this->lang->line('Invalid'); 
                                     $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);   
                                 }
                
                         }else{
-                                $response['status']['status'] = 'failure';
-                                $response['status']['status_code'] = '500';
-                                $response['message'] = 'Internal server error';   
+                                $response['status']['status'] = $this->lang->line('failure_status');
+                                $response['status']['status_code'] = $this->lang->line('code_500');
+                                $response['message'] = $this->lang->line('Internal_server_error');
                                 $this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);   
                         }
                         }
                     }else{
-                        $response['status']['status'] = 'failure';
-                        $response['status']['status_code'] = '401';
-                        $response['message'] = 'Unautorized user';   
+                        $response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_401');
+                        $response['message'] = $this->lang->line('Unautorized_user'); 
                         $this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);
                     }       
-        }    
+        }
+       }else{
+			$response['status']['status'] = $this->lang->line('failure_status');
+			$response['status']['status_code'] = $this->lang->line('code_422');
+			$response['message']['data'] = $this->form_validation->error_array();	
+			$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
+	}       
     
 		}
 }

@@ -12,6 +12,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |
 */
 defined('SHOW_DEBUG_BACKTRACE') OR define('SHOW_DEBUG_BACKTRACE', TRUE);
+define('FACEBOOK_URL', 'https://graph.facebook.com/');
+define('TWITTER_URL', 'https://twitter.com/');
+define('LINKEDIN_URL', 'https://api.linkedin.com/v1/people/~?format=json');
 
 /*
 |--------------------------------------------------------------------------
