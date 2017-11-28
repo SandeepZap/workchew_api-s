@@ -124,6 +124,7 @@ class User extends REST_Controller {
 								$response['status']['status'] = $this->lang->line('success_status');
 								$response['status']['status_code'] = $this->lang->line('code_200');
 								$response['message'] = 'Please check your email for your password';
+								$response['response']['data'] = 'Please check your email for your password';
 								$this->set_response($response, REST_Controller::HTTP_OK);
 							}else{
 								$response['status']['status'] = $this->lang->line('failure_status');
