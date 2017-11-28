@@ -17,7 +17,10 @@ class Business extends REST_Controller {
      * RETURN: Json response 
      */
    public function get_bussiness_post(){
-		 $url= "https://api.yelp.com/v3/businesses/search?term=restaurants&location=washingtondc";
+	   $this->form_validation->set_rules('location', 'Location', 'required');
+		         if ($this->form_validation->run()) {
+	   $location = $this->post('location');
+		 $url= "https://api.yelp.com/v3/businesses/search?term=restaurants&location=".$location;
          $access_token = 'f_GMjKlvOfRR8vY24Z0sq7qpZCJwrGkNBO49hR8g8Y4fYygYIJVr1Pnx3YMtBMoP9_tkHKRx4hXftzOui8z3KUH7RTBtumdhvOlxXeIToTdCiO_rQ5eRAVZmBm4bWnYx';
                 $opts = array(
                     'http'=>array(
@@ -66,8 +69,15 @@ class Business extends REST_Controller {
 			$response['message'] = $this->lang->line('Internal_server_error');
 			$response['response']['data'] = 'Bussiness not Added successfully';
 			$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
-		}      
-	 }
+		}
+	}else{
+			$response['status']['status'] = $this->lang->line('failure_status');
+			$response['status']['status_code'] = $this->lang->line('code_422');
+			$response['message']["data"] = $this->form_validation->error_array();	
+			$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
+		
+	}      
+}
 	 
 	 
 	 
