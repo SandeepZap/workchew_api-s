@@ -66,9 +66,11 @@ class Business extends REST_Controller {
            'state'=>$restaurants['location']['state'],
            'phone'=>$restaurants['phone'],
            'distance'=>$restaurants['distance'],
+           'seats_available'=> '30',
+           'discount'=> '15',
         );
         $category_data = array('categories'=>$restaurants['categories']); 
-        $hours_data = array('hours'=>$hours_response['hours']); 
+        $hours_data = array('hours'=> (isset($hours_response['hours'])) ? $hours_response['hours'] : ''); 
         $reviews_data = array('reviews'=>$review_response['reviews']); 
         $result = $this->bussiness_model->AddRestaurent($restaurants_data,$category_data,$hours_data,$reviews_data);
 }

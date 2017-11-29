@@ -48,7 +48,7 @@ class Bussiness_model extends CI_Model {
 	}
 	
     public function business_hours($id,$hours_data){
-		if(!empty($hours_data)){
+		if(!empty($hours_data['hours'])){
 			//print_r($hours_data['hours'][0]);die();
 			   $this->db->delete('bussiness_hours', array('businesses_id' => $id));
 			   foreach($hours_data['hours'][0]['open'] as $hours){
