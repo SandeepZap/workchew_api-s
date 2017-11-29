@@ -161,6 +161,39 @@ class Business extends REST_Controller {
 						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 			}
 	  }
+	  
+	   /**
+     * search Business from database according to name
+     * URL : http://localhost/workchew/index.php/api/business/get_bussiness_byname
+     * METHOD: POST
+     * PARAMS: businesses_id
+     * RETURN: Json response 
+     */
+	 
+	  public function get_bussiness_byname_post(){
+		  $this->form_validation->set_rules('name', 'Businesses Name', 'required');
+		   if ($this->form_validation->run()) {
+				$businesses_name = $this->post('name');
+				$data = $this->bussiness_model->search_business_byname(array('name' => $businesses_name), array('*'));
+					 if(!empty($data)){     
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('success_status');
+							$response['response']['data'] = $data;
+							$this->set_response($response, REST_Controller::HTTP_OK);
+					 }else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('Invalid_id');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST); 
+					 }
+		   }else{
+					 	$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_422');
+                        $response['message']["data"] = $this->form_validation->error_array();	
+						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+			}
+	  }
    
 	
 }

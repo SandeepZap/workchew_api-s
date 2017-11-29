@@ -104,5 +104,11 @@ class Bussiness_model extends CI_Model {
 		$bussiness_data[] = $result;
 		return $bussiness_data;
     }
+    
+    public function search_business_byname($like = array(), $select = '*') {
+		$bussiness_data = array();
+        $result = $this->db->select($select)->like($like)->get('businesses')->result_array();
+		return $result;
+    }
 }
 ?>
