@@ -166,7 +166,7 @@ class Business extends REST_Controller {
      * search Business from database according to name
      * URL : http://localhost/workchew/index.php/api/business/get_bussiness_byname
      * METHOD: POST
-     * PARAMS: businesses_id
+     * PARAMS: name
      * RETURN: Json response 
      */
 	 
