@@ -11,6 +11,13 @@ class Bussiness_model extends CI_Model {
           $business_data = array('name' =>  $data['name'], 'image_url' => $data['image_url'],'review_count'=> $data['review_count'],'rating'=> $data['rating'],'latitude'=> $data['latitude'],'longitude'=> $data['longitude'],'price'=> $data['price'],'address1'=> $data['address1'],'address2'=> $data['address2'],'city'=> $data['city'],'zip_code'=> $data['zip_code'],'country'=> $data['country'],'state'=> $data['state'],'phone'=> $data['phone'],'distance'=> $data['distance'],'updated_at' => date('Y-m-d H:i:s'));
             $this->db->where('businesses_id', $data['businesses_id']);
             $this->db->update('businesses', $business_data);
+            $get_data = $this->get_row(array('businesses_id' => $data['businesses_id']),array('id'));
+            if(!empty($get_data)){
+				$id = $get_data['id'];
+				$this->categories($id,$category_data);
+                $this->business_hours($id,$hours_data);
+                $this->business_reviews($id,$reviews_data);
+			}
             if ($this->db->affected_rows()) {
                 return true;
             } else {
@@ -109,6 +116,10 @@ class Bussiness_model extends CI_Model {
 		$bussiness_data = array();
         $result = $this->db->select($select)->like($like)->get('businesses')->result_array();
 		return $result;
+    }
+    
+    public function get_row($where = array(), $select = '*') {
+        return $this->db->select($select)->where($where)->get('businesses')->row_array();
     }
 }
 ?>
