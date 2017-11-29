@@ -8,6 +8,25 @@ class Business extends REST_Controller {
         $this->lang->load('english_lang', 'english');
         $this->load->model('bussiness_model');
     }
+    
+    public function make_api_call($url){
+		$access_token = 'f_GMjKlvOfRR8vY24Z0sq7qpZCJwrGkNBO49hR8g8Y4fYygYIJVr1Pnx3YMtBMoP9_tkHKRx4hXftzOui8z3KUH7RTBtumdhvOlxXeIToTdCiO_rQ5eRAVZmBm4bWnYx';
+                $opts = array(
+                    'http'=>array(
+                        'ignore_errors' => TRUE,
+                        'method'=>"GET",
+                        'header'=>"Authorization: Bearer ". $access_token."\r\n"
+                    ),
+                     "ssl"=>array(
+						"verify_peer"=>false,
+						"verify_peer_name"=>false,
+					),
+                );
+                $context = stream_context_create($opts);
+                $json = file_get_contents($url, false, $context);
+                $response_data = json_decode($json, TRUE);
+				return $response_data;
+	}
 
     /**
      * Get Business from yelp and sae into database
@@ -20,21 +39,16 @@ class Business extends REST_Controller {
 	   $this->form_validation->set_rules('location', 'Location', 'required');
 		         if ($this->form_validation->run()) {
 	   $location = $this->post('location');
-		 $url= "https://api.yelp.com/v3/businesses/search?term=restaurants&location=".$location;
-         $access_token = 'f_GMjKlvOfRR8vY24Z0sq7qpZCJwrGkNBO49hR8g8Y4fYygYIJVr1Pnx3YMtBMoP9_tkHKRx4hXftzOui8z3KUH7RTBtumdhvOlxXeIToTdCiO_rQ5eRAVZmBm4bWnYx';
-                $opts = array(
-                    'http'=>array(
-                        'ignore_errors' => TRUE,
-                        'method'=>"GET",
-                        'header'=>"Authorization: Bearer ". $access_token."\r\n"
-                    )
-                );
-                $context = stream_context_create($opts);
-                $json = file_get_contents($url, false, $context);
-                //print_r($json);die();
-                $response_data = json_decode($json, TRUE);
+		 $url = "https://api.yelp.com/v3/businesses/search?term=restaurants&location=".$location;
+         $response_data = $this->make_api_call($url);
     foreach ($response_data['businesses'] as $restaurants) {
-
+		//Get Hours for the business
+			$hours_url = "https://api.yelp.com/v3/businesses/".$restaurants['id'];
+			$hours_response = $this->make_api_call($hours_url);
+		// Get reviews for the business
+			$reviews_url = "https://api.yelp.com/v3/businesses/".$restaurants['id']."/reviews";
+			$review_response = $this->make_api_call($reviews_url);
+			
         	$restaurants_data = array('businesses_id'=>$restaurants['id'],
            'name'=>$restaurants['name'],
            'image_url'=>$restaurants['image_url'],
@@ -54,8 +68,10 @@ class Business extends REST_Controller {
            'distance'=>$restaurants['distance'],
         );
         $category_data = array('categories'=>$restaurants['categories']); 
-        $result = $this->bussiness_model->AddRestaurent($restaurants_data,$category_data);
-	}
+        $hours_data = array('hours'=>$hours_response['hours']); 
+        $reviews_data = array('reviews'=>$review_response['reviews']); 
+        $result = $this->bussiness_model->AddRestaurent($restaurants_data,$category_data,$hours_data,$reviews_data);
+}
          if($result){
 				$response['status']['status'] = $this->lang->line('success_status');
 				$response['status']['status_code'] = $this->lang->line('code_200');
@@ -123,7 +139,7 @@ class Business extends REST_Controller {
 		  $this->form_validation->set_rules('businesses_id', 'Businesses', 'required');
 		   if ($this->form_validation->run()) {
 				$businesses_id = $this->post('businesses_id');
-				$data = $this->bussiness_model->get_row(array('businesses_id' => $businesses_id), array('*'));
+				$data = $this->bussiness_model->get_business_detail(array('businesses_id' => $businesses_id), array('*'));
 					 if(!empty($data)){     
 							$response['status']['status'] = $this->lang->line('success_status');
 							$response['status']['status_code'] = $this->lang->line('code_200');
