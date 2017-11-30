@@ -11,7 +11,7 @@ class User extends REST_Controller {
 
     /**
      * User Login API
-     * URL : http://localhost/index.php/workchew/api/user/login
+     * URL : http://localhost/workchew/index.php/api/user/login
      * METHOD: POST
      * PARAMS: Email, password
      * RETURN: Json response 
@@ -157,7 +157,7 @@ class User extends REST_Controller {
      * URL : http://localhost/workchew/index.php/api/user/social_login
      * METHOD: POST
      * PARAMS: facebook_token
-     * RETURN: Json response 
+     * RETURN: Json response
      */
      
 	public function social_login_post(){
@@ -375,5 +375,57 @@ class User extends REST_Controller {
 	}       
     
 		}
+		
+	/**
+     * User Change Password API
+     * URL : http://localhost/workchew/index.php/api/user/change_password
+     * METHOD: POST
+     * PARAMS: Email,ID
+     * RETURN: Json response.
+     */	
+	public function change_password_post(){
+       $this->form_validation->set_rules('email', 'Email', 'trim|required');
+       $this->form_validation->set_rules('id', 'User Id', 'trim|required');
+       $this->form_validation->set_rules('new_password', 'Password', 'trim|required');
+			if ($this->form_validation->run()) {
+				/*
+                     * check if user exists in database with details
+                     */
+                    $user = $this->user_model->get_row(array('email' => $this->post('email'),'id' => $this->post('id')), array('first_name', 'last_name' ,'id'));
+                    if (!empty($user)) {
+                                $passwordplain = $this->post('new_password');
+								$newpass = md5($passwordplain);
+                        $saved = $this->user_model->update(array(
+                            'password' => $newpass
+                                ), array('email' =>  $this->post('email'),'id' => $this->post('id')));
+                        if ($saved) {
+								$response['status']['status'] = $this->lang->line('success_status');
+								$response['status']['status_code'] = $this->lang->line('code_200');
+								$response['message'] = $this->lang->line('password_changed');
+								$response['response']['data'] = $this->lang->line('password_changed');
+								$this->set_response($response, REST_Controller::HTTP_OK);
+                            
+						}else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_500');
+							$response['message'] = $this->lang->line('Internal_server_error');
+							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);
+						}
+					}else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('Not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+					}
+				
+			}else{
+				$response['status']['status'] = $this->lang->line('failure_status');
+				$response['status']['status_code'] = $this->lang->line('code_422');
+				$response['message']['data'] = $this->form_validation->error_array();	
+				$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);
+				
+			}
+	}
+
 }
 ?>

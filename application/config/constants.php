@@ -15,6 +15,7 @@ defined('SHOW_DEBUG_BACKTRACE') OR define('SHOW_DEBUG_BACKTRACE', TRUE);
 define('FACEBOOK_URL', 'https://graph.facebook.com/');
 define('TWITTER_URL', 'https://twitter.com/');
 define('LINKEDIN_URL', 'https://api.linkedin.com/v1/people/~?format=json');
+define('ACCESS_TOKEN', 'f_GMjKlvOfRR8vY24Z0sq7qpZCJwrGkNBO49hR8g8Y4fYygYIJVr1Pnx3YMtBMoP9_tkHKRx4hXftzOui8z3KUH7RTBtumdhvOlxXeIToTdCiO_rQ5eRAVZmBm4bWnYx');
 
 /*
 |--------------------------------------------------------------------------

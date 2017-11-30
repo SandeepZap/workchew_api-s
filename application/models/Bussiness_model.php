@@ -56,7 +56,6 @@ class Bussiness_model extends CI_Model {
 	
     public function business_hours($id,$hours_data){
 		if(!empty($hours_data['hours'])){
-			//print_r($hours_data['hours'][0]);die();
 			   $this->db->delete('bussiness_hours', array('businesses_id' => $id));
 			   foreach($hours_data['hours'][0]['open'] as $hours){
 				$hours = array(
@@ -96,8 +95,8 @@ class Bussiness_model extends CI_Model {
         }	
 	}
 	
-	public function get_result($where = array(), $select = '*',$or_where = array()) {
-        return $this->db->select($select)->where($where)->or_where($or_where)->get('businesses')->result_array();
+	public function get_result($where = array(), $select = '*',$or_where = array(),$limit,$offset) {
+        return $this->db->select($select)->where($where)->or_where($or_where)->get('businesses',$limit,$offset)->result_array();
     }
     
     public function get_business_detail($where = array(), $select = '*') {
@@ -112,9 +111,9 @@ class Bussiness_model extends CI_Model {
 		return $bussiness_data;
     }
     
-    public function search_business_byname($like = array(), $select = '*') {
+    public function search_business_byname($like = array(), $select = '*',$limit,$offset) {
 		$bussiness_data = array();
-        $result = $this->db->select($select)->like($like)->get('businesses')->result_array();
+        $result = $this->db->select($select)->like($like)->get('businesses', $limit, $offset)->result_array();
 		return $result;
     }
     

@@ -10,7 +10,7 @@ class Business extends REST_Controller {
     }
     
     public function make_api_call($url){
-		$access_token = 'f_GMjKlvOfRR8vY24Z0sq7qpZCJwrGkNBO49hR8g8Y4fYygYIJVr1Pnx3YMtBMoP9_tkHKRx4hXftzOui8z3KUH7RTBtumdhvOlxXeIToTdCiO_rQ5eRAVZmBm4bWnYx';
+		$access_token = ACCESS_TOKEN;
                 $opts = array(
                     'http'=>array(
                         'ignore_errors' => TRUE,
@@ -103,7 +103,7 @@ class Business extends REST_Controller {
      * Get Business from database according to location
      * URL : http://localhost/workchew/index.php/api/business/get_bussiness_Bylocation
      * METHOD: POST
-     * PARAMS: location,log,lat
+     * PARAMS: location,log,lat,limit,page
      * RETURN: Json response 
      */
 	 
@@ -113,10 +113,18 @@ class Business extends REST_Controller {
 					 $location = $this->post('location');
 					 $longitude = $this->post('longitude');
 					 $latitude = $this->post('latitude');
-					 $data = $this->bussiness_model->get_result(array('city' => $location),array('*'),array('longitude' => $longitude,'	latitude' => $latitude));
+					 $limit = $this->post('limit'); // Set limit for pagination
+					 $page_number = $this->post('page'); // Set page number for pagination
+					 $offset = ($page_number - 1) * $limit; // Set limit for pagination
+					 $data = $this->bussiness_model->get_result(array('city' => $location),array('*'),array('longitude' => $longitude,'	latitude' => $latitude),$limit,$offset);
+					 if(!empty($data)){   
+						 $message = $this->lang->line('success_status');
+					 }else{
+						 $message = $this->lang->line('record_not_found');
+					 }
 					 $output['status']['status'] = $this->lang->line('success_status');
 					 $output['status']['status_code'] = $this->lang->line('code_200');
-					 $output['message'] =  $this->lang->line('success_status');
+					 $output['message'] =  $message;
 					 $output['response']['data'] = $data;
 					 $this->set_response($output, REST_Controller::HTTP_OK);   
 					 
@@ -166,7 +174,7 @@ class Business extends REST_Controller {
      * search Business from database according to name
      * URL : http://localhost/workchew/index.php/api/business/get_bussiness_byname
      * METHOD: POST
-     * PARAMS: name
+     * PARAMS: name,limit,page
      * RETURN: Json response 
      */
 	 
@@ -174,19 +182,20 @@ class Business extends REST_Controller {
 		  $this->form_validation->set_rules('name', 'Businesses Name', 'required');
 		   if ($this->form_validation->run()) {
 				$businesses_name = $this->post('name');
-				$data = $this->bussiness_model->search_business_byname(array('name' => $businesses_name), array('*'));
-					 if(!empty($data)){     
+				$limit = $this->post('limit'); // set limit for pagination 
+				$page_number = $this->post('page'); // set page number for pagination
+				$offset = ($page_number - 1) * $limit; // set offset for pagination
+				$data = $this->bussiness_model->search_business_byname(array('name' => $businesses_name), array('*'),$limit,$offset);
+					 if(!empty($data)){   
+						 $message = $this->lang->line('success_status');
+					 }else{
+						 $message = $this->lang->line('record_not_found');
+					 }
 							$response['status']['status'] = $this->lang->line('success_status');
 							$response['status']['status_code'] = $this->lang->line('code_200');
-							$response['message'] =  $this->lang->line('success_status');
+							$response['message'] =  $message;
 							$response['response']['data'] = $data;
 							$this->set_response($response, REST_Controller::HTTP_OK);
-					 }else{
-							$response['status']['status'] = $this->lang->line('failure_status');
-							$response['status']['status_code'] = $this->lang->line('code_400');
-							$response['message'] = $this->lang->line('Invalid_id');
-							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST); 
-					 }
 		   }else{
 					 	$response['status']['status'] = $this->lang->line('failure_status');
                         $response['status']['status_code'] = $this->lang->line('code_422');

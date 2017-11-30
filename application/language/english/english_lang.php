@@ -13,6 +13,8 @@ $lang["Invalid_id"] = "Business not found";
 $lang["Unautorized_user"] = "Unautorized user";	
 $lang["login_successfull"] = "You are Login successfully.";	
 $lang["register_successfull"] = "You are registered successfully.";	
-$lang["Not_found"] = "Email not found";
+$lang["Not_found"] = "User not found";
+$lang["password_changed"] = "Password changed successfully";
+$lang["record_not_found"] = "Record not found";
 
 ?>
