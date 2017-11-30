@@ -13,7 +13,7 @@ class User extends REST_Controller {
      * User Login API
      * URL : http://localhost/workchew/index.php/api/user/login
      * METHOD: POST
-     * PARAMS: Email, password
+     * PARAMS: email, password
      * RETURN: Json response 
      */
     public function login_post() {
@@ -94,9 +94,9 @@ class User extends REST_Controller {
 	
 	 /**
      * User Forgot Password API
-     * URL : http://localhost/workchew/api/user/forgot_password
+     * URL : http://localhost/workchew/index.php/api/user/forgot_password
      * METHOD: POST
-     * PARAMS: Email
+     * PARAMS: email
      * RETURN: Json response. Send password in mail 
      */	
 	public function forgot_password_post(){
@@ -156,7 +156,7 @@ class User extends REST_Controller {
      * User Login using social API
      * URL : http://localhost/workchew/index.php/api/user/social_login
      * METHOD: POST
-     * PARAMS: facebook_token
+     * PARAMS: provider (facebook- uid,access_token | LinkedIn- access_token | Twitter- username)
      * RETURN: Json response
      */
      
@@ -380,7 +380,7 @@ class User extends REST_Controller {
      * User Change Password API
      * URL : http://localhost/workchew/index.php/api/user/change_password
      * METHOD: POST
-     * PARAMS: Email,ID
+     * PARAMS: email,id,new_password
      * RETURN: Json response.
      */	
 	public function change_password_post(){

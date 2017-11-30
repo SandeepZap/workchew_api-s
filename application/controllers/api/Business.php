@@ -9,6 +9,11 @@ class Business extends REST_Controller {
         $this->load->model('bussiness_model');
     }
     
+    /**
+     * Function to call the yelp API
+     * RETURN: array in response
+     */
+    
     public function make_api_call($url){
 		$access_token = ACCESS_TOKEN;
                 $opts = array(
@@ -29,10 +34,10 @@ class Business extends REST_Controller {
 	}
 
     /**
-     * Get Business from yelp and sae into database
+     * Get Business from yelp and save into database
      * URL : http://localhost/workchew/index.php/api/business/get_bussiness
      * METHOD: POST
-     * PARAMS: membership
+     * PARAMS: location
      * RETURN: Json response 
      */
    public function get_bussiness_post(){

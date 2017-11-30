@@ -45,7 +45,6 @@ class Membership extends REST_Controller {
      * Get all memberships
      * URL : http://localhost/workchew/index.php/api/membership/getall_membership
      * METHOD: GET
-     * PARAMS: 
      * RETURN: Json response 
      */
 	public function getall_membership_get() {
