@@ -96,7 +96,7 @@ class Bussiness_model extends CI_Model {
 	}
 	
 	public function get_result($where = array(), $select = '*',$or_where = array(),$limit,$offset) {
-        return $this->db->select($select)->where($where)->or_where($or_where)->get('businesses',$limit,$offset)->result_array();
+        return $this->db->select($select)->like($where)->or_where($or_where)->get('businesses',$limit,$offset)->result_array();
     }
     
     public function get_business_detail($where = array(), $select = '*') {
