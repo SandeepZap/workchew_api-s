@@ -439,26 +439,13 @@ class User extends REST_Controller {
 		 $this->form_validation->set_rules('membership_id', 'Membership', 'required');
 		 //$this->form_validation->set_rules('start_date', 'Date', 'required');
 		if ($this->form_validation->run() == true){
+			$user = $this->user_model->getuser_subscription($this->post('user_id'));
 				$start_date = date('Y-m-d H:i:s');
-				$valid_upto = $this->post('valid_upto');
+				$valid_upto = '1';
 				$expires = strtotime('+'.$valid_upto.' days', strtotime($start_date));
 				$date_diff=($expires-strtotime($start_date)) / 86400;
 				$end_date = date('Y-m-d H:i:s', $expires);
 				//$days_left = round($date_diff, 0);
-			$user = $this->user_model->getuser_subscription($this->post('user_id'));
-			if(!empty($user)){
-				 $saved = $this->user_model->update_users_subscription(array(
-							'membership_id' => $this->post('membership_id'),
-							'status' => '1',
-							'start_date' => $start_date,
-							'end_date' => $end_date,
-                                ), array('user_id' => $this->post('user_id')));
-				$response['status']['status'] = $this->lang->line('success_status');
-				$response['status']['status_code'] = $this->lang->line('code_201');
-				$response['message'] = $this->lang->line('success_status');
-				$response['response']['data'] = $user;
-				$this->set_response($response, REST_Controller::HTTP_CREATED);	
-			}else{
 			$insert = array(
 			  'user_id' => $this->post('user_id'),
 			  'membership_id' => $this->post('membership_id'),
@@ -480,13 +467,81 @@ class User extends REST_Controller {
 							$response['message'] = $this->lang->line('Internal_server_error');
 							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
 						}		
-		}}else{
+		}else{
 							$response ['status']['status'] = $this->lang->line('failure_status');
 							$response['status']['status_code'] = $this->lang->line('code_422');
 							$response['message']['data'] = $this->form_validation->error_array();	
 							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 		}
 	}
+	
+	
+	  /**
+     * Get all users's subscription 
+     * URL : http://localhost/workchew/index.php/api/user/get_user_subscription
+     * METHOD: POST
+     * PARAMS: user_id,limit,page
+     * RETURN: Json response 
+     */
+	 
+	  public function get_user_subscription_post(){
+		  $this->form_validation->set_rules('user_id', 'User', 'required');
+		   if ($this->form_validation->run()) {
+				$user_id = $this->post('user_id');
+				$limit = $this->post('limit'); // set limit for pagination 
+				$page_number = $this->post('page'); // set page number for pagination
+				$offset = ($page_number - 1) * $limit; // set offset for pagination
+				 $data = $this->user_model->getusersall_subscription($user_id,$limit,$offset);
+					 if(!empty($data)){   
+						 $message = $this->lang->line('success_status');
+					 }else{
+						 $message = $this->lang->line('record_not_found');
+					 }
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $message;
+							$response['response']['data'] = $data;
+							$this->set_response($response, REST_Controller::HTTP_OK);
+		   }else{
+					 	$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_422');
+                        $response['message']["data"] = $this->form_validation->error_array();	
+						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+			}
+	  }
+	  
+	  /**
+     * Get user subscription detail
+     * URL : http://localhost/workchew/index.php/api/user/get_subscription_detail
+     * METHOD: POST
+     * PARAMS: suscription_id
+     * RETURN: Json response 
+     */
+	 
+	  public function get_subscription_detail_post(){
+		  $this->form_validation->set_rules('suscription_id', 'Subscription', 'required');
+		   if ($this->form_validation->run()) {
+				$id = $this->post('suscription_id');
+				 $subscription = $this->user_model->getuser_subscription($id);
+					 if(!empty($subscription)){
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('success_status');
+							$response['response']['data'] = $subscription;
+							$this->set_response($response, REST_Controller::HTTP_OK);   
+					 }else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('record_not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+					 }
+		   }else{
+					 	$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_422');
+                        $response['message']["data"] = $this->form_validation->error_array();	
+						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+			}
+	  }
 	
 
 }
