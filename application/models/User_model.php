@@ -32,6 +32,28 @@ class User_model extends CI_Model {
         $this->db->update('users', $data, $where);
         return $this->db->affected_rows();
     }
+    
+    public function adduser_subscription($insert){
+		if($this->db->insert('users_subscription', $insert)){
+			return $this->db->insert_id();
+		}
+	}
+	
+	public function getuser_subscription($id){
+		$this->db->select('us.status,us.start_date,us.end_date,us.check_in,u.email,u.first_name,u.last_name,m.name AS membershp_name,m.membership,m.valid_upto,m.price,m.detail');
+		$this->db->from('users_subscription us');
+		$this->db->join('users u', 'u.id = us.user_id', 'INNER');
+		$this->db->join('memberships m', 'm.id = us.membership_id', 'INNER');
+		$this->db->where('us.user_id',$id);
+		$query = $this->db->get(); 
+		return $query->row_array();
+	}
+	
+	
+     public function update_users_subscription($data, $where) {
+        $this->db->update('users_subscription', $data, $where);
+        return $this->db->affected_rows();
+    }
 
 }
 ?>
