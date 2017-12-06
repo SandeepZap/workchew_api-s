@@ -436,43 +436,60 @@ class User extends REST_Controller {
      * RETURN: Json response 
      */
 	public function add_subscription_post() {
-		 $this->form_validation->set_rules('user_id', 'User',  'required');
-		 $this->form_validation->set_rules('membership_id', 'Membership', 'required');
-		 //$this->form_validation->set_rules('start_date', 'Date', 'required');
-		if ($this->form_validation->run() == true){
-			$user = $this->user_model->getuser_subscription($this->post('user_id'));
-				$start_date = date('Y-m-d H:i:s');
-				$valid_upto = $this->post('valid_upto');
-				$expires = strtotime('+'.$valid_upto.' days', strtotime($start_date));
-				$date_diff=($expires-strtotime($start_date)) / 86400;
-				$end_date = date('Y-m-d H:i:s', $expires);
-				//$days_left = round($date_diff, 0);
-			$insert = array(
-			  'user_id' => $this->post('user_id'),
-			  'membership_id' => $this->post('membership_id'),
-			  'status' => '1',
-			  'start_date' => $start_date,
-			  'end_date' => $end_date,
-			);
-			$id = $this->user_model->adduser_subscription($insert);
-						if ($id) {
-							$user = $this->user_model->getuser_subscription($id);
-							$response['status']['status'] = $this->lang->line('success_status');
-							$response['status']['status_code'] = $this->lang->line('code_201');
-							$response['message'] = $this->lang->line('success_status');
-							$response['response']['data'] = $user;
-							$this->set_response($response, REST_Controller::HTTP_CREATED);	
+		 $headers = $this->get_headers();
+		if(isset($headers['token'])){
+			$output = JWT::decode($headers['token'],MY_SECRET_KEY, array('HS256'));
+			$decoded_array = (array) $output;
+				if(isset($decoded_array['id'])){
+					$user_id = $decoded_array['id']; 
+						 $this->form_validation->set_rules('membership_id', 'Membership', 'required');
+						 //$this->form_validation->set_rules('start_date', 'Date', 'required');
+						if ($this->form_validation->run() == true){
+							$user = $this->user_model->getuser_subscription($user_id);
+								$start_date = date('Y-m-d H:i:s');
+								$valid_upto = $this->post('valid_upto');
+								$expires = strtotime('+'.$valid_upto.' days', strtotime($start_date));
+								$date_diff=($expires-strtotime($start_date)) / 86400;
+								$end_date = date('Y-m-d H:i:s', $expires);
+								//$days_left = round($date_diff, 0);
+							$insert = array(
+							  'user_id' => $this->post('user_id'),
+							  'membership_id' => $this->post('membership_id'),
+							  'status' => '1',
+							  'start_date' => $start_date,
+							  'end_date' => $end_date,
+							);
+							$id = $this->user_model->adduser_subscription($insert);
+								if ($id) {
+									$user = $this->user_model->getuser_subscription($id);
+									$response['status']['status'] = $this->lang->line('success_status');
+									$response['status']['status_code'] = $this->lang->line('code_201');
+									$response['message'] = $this->lang->line('success_status');
+									$response['response']['data'] = $user;
+									$this->set_response($response, REST_Controller::HTTP_CREATED);	
+								}else{
+									$response ['status']['status'] = $this->lang->line('failure_status');
+									$response['status']['status_code'] = $this->lang->line('code_500');
+									$response['message'] = $this->lang->line('Internal_server_error');
+									$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
+								}		
 						}else{
-							$response ['status']['status'] = $this->lang->line('failure_status');
-							$response['status']['status_code'] = $this->lang->line('code_500');
-							$response['message'] = $this->lang->line('Internal_server_error');
-							$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
-						}		
-		}else{
 							$response ['status']['status'] = $this->lang->line('failure_status');
 							$response['status']['status_code'] = $this->lang->line('code_422');
 							$response['message']['data'] = $this->form_validation->error_array();	
 							$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+						}
+				}else{
+					$response['status']['status'] = $this->lang->line('failure_status');
+					$response['status']['status_code'] = $this->lang->line('code_400');
+					$response['message'] = $this->lang->line('Not_found');
+					$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+				}
+		}else{
+			$response['status']['status'] = $this->lang->line('failure_status');
+			$response['status']['status_code'] = $this->lang->line('code_400');
+			$response['message'] = $this->lang->line('token_not_found');
+			$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
 		}
 	}
 	
