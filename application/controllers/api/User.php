@@ -432,7 +432,7 @@ class User extends REST_Controller {
      * Add user subscription
      * URL : http://localhost/workchew/index.php/api/user/add_subscription
      * METHOD: POST
-     * PARAMS: user_id,membership_id,start_date,
+     * PARAMS: user_id,membership_id,start_date,valid_upto
      * RETURN: Json response 
      */
 	public function add_subscription_post() {
@@ -453,7 +453,7 @@ class User extends REST_Controller {
 								$end_date = date('Y-m-d H:i:s', $expires);
 								//$days_left = round($date_diff, 0);
 							$insert = array(
-							  'user_id' => $this->post('user_id'),
+							  'user_id' => $user_id,
 							  'membership_id' => $this->post('membership_id'),
 							  'status' => '1',
 							  'start_date' => $start_date,
