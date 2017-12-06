@@ -59,6 +59,20 @@ class User_model extends CI_Model {
 		$query = $this->db->get(); 
 		return $query->result_array();
     }
+    
+    public function check_subscription($id){
+		$this->db->select('*');
+		$this->db->from('users_subscription');
+		$this->db->order_by('id', 'DESC');
+		$this->db->where('user_id',$id);
+		$query = $this->db->get(); 
+		return $query->row_array();
+	}
+	
+	public function update_usersubscription($data, $where) {
+        $this->db->update('users_subscription', $data, $where);
+        return $this->db->affected_rows();
+    }
 
 }
 ?>

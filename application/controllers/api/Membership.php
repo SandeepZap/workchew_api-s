@@ -17,10 +17,6 @@ class Membership extends REST_Controller {
      * RETURN: Json response 
      */
     public function get_membership_byname_post() {
-		//~ $headers=array();
-		//~ foreach (getallheaders() as $name => $value) {
-			//~ $headers[$name] = $value;
-		//~ }
         $membership = $this->post('membership');
         $this->form_validation->set_rules('membership', 'Membership', 'required');
         if ($this->form_validation->run()) {

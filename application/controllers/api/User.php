@@ -1,6 +1,7 @@
 <?php
 require_once APPPATH . '/libraries/REST_Controller.php';
 require_once APPPATH . '/libraries/JWT.php';
+require_once APPPATH . '/libraries/SignatureInvalidException.php';
 use \Firebase\JWT\JWT;
 class User extends REST_Controller {
     public function __construct() {
@@ -33,7 +34,7 @@ class User extends REST_Controller {
                         $output['status']['status_code'] = $this->lang->line('code_200');
                         $output['message'] =  $this->lang->line('login_successfull');
                         $output['response']['data'] = $user;
-                        $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+                        $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                         $this->set_response($output, REST_Controller::HTTP_OK);	
 			} else {
 						$response['status']['status'] = $this->lang->line('failure_status');
@@ -188,7 +189,7 @@ class User extends REST_Controller {
 							$output['status']['status_code'] = $this->lang->line('code_200');
 							$output['message'] =  $this->lang->line('login_successfull');
 							$output['response']['data'] = $get_user;
-							$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+							$output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
 							$this->set_response($output, REST_Controller::HTTP_OK);	
 					 
 						}else{
@@ -212,7 +213,7 @@ class User extends REST_Controller {
 									$output['status']['status_code'] = $this->lang->line('code_200');
 									$output['message'] =  $this->lang->line('login_successfull');
 									$output['response']['data'] = $user;
-									$output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+									$output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
 									$this->set_response($output, REST_Controller::HTTP_OK);	
 								} else {
 									$response['status']['status'] = $this->lang->line('failure_status');
@@ -251,7 +252,7 @@ class User extends REST_Controller {
                             $output['status']['status_code'] = $this->lang->line('code_200');
                             $output['message'] =  $this->lang->line('login_successfull');
                             $output['response']['data'] = $get_user;
-                            $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+                            $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                     }else{
                             $insert = array(
@@ -271,7 +272,7 @@ class User extends REST_Controller {
                                         $output['status']['status_code'] = $this->lang->line('code_200');
                                         $output['message'] =  $this->lang->line('login_successfull');
                                         $output['response']['data'] = $user;
-                                        $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+                                        $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                                         $this->set_response($output, REST_Controller::HTTP_OK);   
                                     } else {
                                         $response['status']['status'] = $this->lang->line('failure_status');
@@ -320,7 +321,7 @@ class User extends REST_Controller {
                             $output['status']['status_code'] = $this->lang->line('code_200');
                             $output['message'] = $this->lang->line('login_successfull');
                             $output['response']['data'] = $get_user;
-                            $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+                            $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                      
                         }else{
@@ -344,7 +345,7 @@ class User extends REST_Controller {
                                     $output['status']['status_code'] = $this->lang->line('code_200');
                                     $output['message'] =  $this->lang->line('login_successfull');
                                     $output['response']['data'] = $user;
-                                    $output['response']['data']['id_token'] = JWT::encode($token, "my Secret key!");
+                                    $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                                     $this->set_response($output, REST_Controller::HTTP_OK);   
                                 } else {
                                     $response['status']['status'] = $this->lang->line('failure_status');
@@ -485,30 +486,39 @@ class User extends REST_Controller {
      */
 	 
 	  public function get_user_subscription_post(){
-		  $this->form_validation->set_rules('user_id', 'User', 'required');
-		   if ($this->form_validation->run()) {
-				$user_id = $this->post('user_id');
-				$limit = $this->post('limit'); // set limit for pagination 
-				$page_number = $this->post('page'); // set page number for pagination
-				$offset = ($page_number - 1) * $limit; // set offset for pagination
-				 $data = $this->user_model->getusersall_subscription($user_id,$limit,$offset);
+		 $headers = $this->get_headers();
+		if(isset($headers['token'])){
+			$output = JWT::decode($headers['token'],MY_SECRET_KEY, array('HS256'));
+			$decoded_array = (array) $output;
+				if(isset($decoded_array['id'])){
+					$user_id = $decoded_array['id']; 
+					$limit = $this->post('limit'); // set limit for pagination 
+					$page_number = $this->post('page'); // set page number for pagination
+					$offset = ($page_number - 1) * $limit; // set offset for pagination
+					$data = $this->user_model->getusersall_subscription($user_id,$limit,$offset);
 					 if(!empty($data)){   
 						 $message = $this->lang->line('success_status');
 					 }else{
 						 $message = $this->lang->line('record_not_found');
 					 }
-							$response['status']['status'] = $this->lang->line('success_status');
-							$response['status']['status_code'] = $this->lang->line('code_200');
-							$response['message'] =  $message;
-							$response['response']['data'] = $data;
-							$this->set_response($response, REST_Controller::HTTP_OK);
-		   }else{
-					 	$response['status']['status'] = $this->lang->line('failure_status');
-                        $response['status']['status_code'] = $this->lang->line('code_422');
-                        $response['message']["data"] = $this->form_validation->error_array();	
-						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
-			}
-	  }
+					$response['status']['status'] = $this->lang->line('success_status');
+					$response['status']['status_code'] = $this->lang->line('code_200');
+					$response['message'] =  $message;
+					$response['response']['data'] = $data;
+					$this->set_response($response, REST_Controller::HTTP_OK);
+				}else{
+					$response['status']['status'] = $this->lang->line('failure_status');
+					$response['status']['status_code'] = $this->lang->line('code_400');
+					$response['message'] = $this->lang->line('Not_found');
+					$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+				}
+	   }else{
+			$response['status']['status'] = $this->lang->line('failure_status');
+			$response['status']['status_code'] = $this->lang->line('code_400');
+			$response['message'] = $this->lang->line('token_not_found');
+			$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+		}
+}
 	  
 	  /**
      * Get user subscription detail
@@ -542,6 +552,63 @@ class User extends REST_Controller {
 						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 			}
 	  }
+	  
+	    public function check_usersubscription_post(){
+		$headers = $this->get_headers();
+		if(isset($headers['token'])){
+		$output = JWT::decode($headers['token'],MY_SECRET_KEY, array('HS256'));
+		$decoded_array = (array) $output;
+          if(isset($decoded_array['id'])){
+			  $id = $decoded_array['id']; 
+				 $subscription = $this->user_model->check_subscription($id);
+			  if(!empty($subscription)){
+				  $end_date = $subscription['end_date'];
+				  $current_date = date('Y-m-d H:i:s');
+				  if($end_date < $current_date){
+					  $update_subscription = $this->user_model->update_usersubscription(array(
+                            'status' => '0'
+                                ), array('id' => $subscription['id']));
+                            $subscription = $this->user_model->check_subscription($id);
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('subscription_expired');
+							$response['response']['data'] = $subscription;
+							$this->set_response($response, REST_Controller::HTTP_OK); 
+				  }else{
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('subscription_not_expired');
+							$response['response']['data'] = $subscription;
+							$this->set_response($response, REST_Controller::HTTP_OK); 
+				  }
+				  
+			  }else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('record_not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+			  }
+		  }else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('Not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+		  }
+		}else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('token_not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+		}
+	}
+	
+	public function get_headers(){
+			$headers=array();
+		foreach (getallheaders() as $name => $value) {
+			$headers[$name] = $value;
+		}
+		return $headers;
+	}
 	
 
 }
