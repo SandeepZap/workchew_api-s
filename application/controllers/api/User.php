@@ -441,7 +441,7 @@ class User extends REST_Controller {
 		if ($this->form_validation->run() == true){
 			$user = $this->user_model->getuser_subscription($this->post('user_id'));
 				$start_date = date('Y-m-d H:i:s');
-				$valid_upto = '1';
+				$valid_upto = $this->post('valid_upto');
 				$expires = strtotime('+'.$valid_upto.' days', strtotime($start_date));
 				$date_diff=($expires-strtotime($start_date)) / 86400;
 				$end_date = date('Y-m-d H:i:s', $expires);
