@@ -620,6 +620,14 @@ class User extends REST_Controller {
 			}
 	  }
 	  
+	 /**
+     * check user subscription status
+     * URL : http://localhost/workchew/index.php/api/user/check_usersuscription
+     * METHOD: POST
+     * PARAMS: Headers token 
+     * RETURN: Json response 
+     */
+	  
 	    public function check_usersubscription_post(){
 		$headers = $this->get_headers();
 		if(isset($headers['token'])){
@@ -664,6 +672,10 @@ class User extends REST_Controller {
 		}
 	}
 	
+	 /**
+     * Function to get headers
+     * RETURN: Headers 
+     */
 	public function get_headers(){
 			$headers=array();
 		foreach (getallheaders() as $name => $value) {
