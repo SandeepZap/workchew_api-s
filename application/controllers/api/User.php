@@ -631,24 +631,19 @@ class User extends REST_Controller {
 			  if(!empty($subscription)){
 				  $end_date = $subscription['end_date'];
 				  $current_date = date('Y-m-d H:i:s');
+				  $response['status']['status'] = $this->lang->line('success_status');
+				  $response['status']['status_code'] = $this->lang->line('code_200');
 				  if($end_date < $current_date){
 					  $update_subscription = $this->user_model->update_usersubscription(array(
                             'status' => '0'
                                 ), array('id' => $subscription['id']));
                             $subscription = $this->user_model->check_subscription($id);
-							$response['status']['status'] = $this->lang->line('success_status');
-							$response['status']['status_code'] = $this->lang->line('code_200');
-							$response['message'] =  $this->lang->line('subscription_expired');
-							$response['response']['data'] = $subscription;
-							$this->set_response($response, REST_Controller::HTTP_OK); 
+							$response['message'] =  $this->lang->line('subscription_expired');		
 				  }else{
-							$response['status']['status'] = $this->lang->line('success_status');
-							$response['status']['status_code'] = $this->lang->line('code_200');
 							$response['message'] =  $this->lang->line('subscription_not_expired');
+				  }
 							$response['response']['data'] = $subscription;
 							$this->set_response($response, REST_Controller::HTTP_OK); 
-				  }
-				  
 			  }else{
 							$response['status']['status'] = $this->lang->line('failure_status');
 							$response['status']['status_code'] = $this->lang->line('code_400');
