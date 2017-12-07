@@ -622,7 +622,7 @@ class User extends REST_Controller {
 	  
 	 /**
      * check user subscription status
-     * URL : http://localhost/workchew/index.php/api/user/check_usersuscription
+     * URL : http://localhost/workchew/index.php/api/user/check_usersubscription
      * METHOD: POST
      * PARAMS: Headers token 
      * RETURN: Json response 
