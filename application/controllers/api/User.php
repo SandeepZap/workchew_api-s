@@ -20,35 +20,48 @@ class User extends REST_Controller {
     public function login_post() {
 		$this->form_validation->set_rules('email', 'Email', 'required|valid_email');
         $this->form_validation->set_rules('password', 'Password', 'required');
-        if ($this->form_validation->run()) {
+	if ($this->form_validation->run()) {
 			$email = $this->post('email');
 			$password = md5($this->post('password'));
 			$id = $this->user_model->login($email,$password);
-			if($id) {
+		if($id) {
+				$subscription = $this->user_model->check_subscription($id);
 				$user = $this->user_model->get_row(array('id' => $id), array('first_name', 'last_name' ,'id','email','username'));
 				$token['id'] = $id;
 				$token['email'] = $email;
 				$date = new DateTime();
 				$token['iat'] = $date->getTimestamp();
-                        $output['status']['status'] = $this->lang->line('success_status');
-                        $output['status']['status_code'] = $this->lang->line('code_200');
-                        $output['message'] =  $this->lang->line('login_successfull');
-                        $output['response']['data'] = $user;
-                        $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
-                        $this->set_response($output, REST_Controller::HTTP_OK);	
-			} else {
+				$response['status']['status'] = $this->lang->line('success_status');
+				$response['status']['status_code'] = $this->lang->line('code_200');
+				$response['message'] =  $this->lang->line('login_successfull');
+			if(!empty($subscription)){
+				  $end_date = $subscription['end_date'];
+				  $current_date = date('Y-m-d H:i:s');
+				  if($end_date < $current_date){
+					$update_subscription = $this->user_model->update_usersubscription(array('status' => '0'), array('id' => $subscription['id']));
+					$subscription = $this->user_model->check_subscription($id);
+				  }
+				$response['response']['data'] = array_merge($subscription,$user);
+			}else{
+				$response['response']['data'] = $user;
+				$response['response']['data']['status'] = '0';
+			}
+							
+				$response['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
+				$this->set_response($response, REST_Controller::HTTP_OK); 
+		}else{
 						$response['status']['status'] = $this->lang->line('failure_status');
                         $response['status']['status_code'] = $this->lang->line('code_401');
                         $response['message'] = $this->lang->line('Invalid');
 						$this->set_response($response, REST_Controller::HTTP_UNAUTHORIZED);	
 			}
-		}else{
+	}else{
 						$response['status']['status'] = $this->lang->line('failure_status');
                         $response['status']['status_code'] = $this->lang->line('code_422');
                         $response['message']["data"] = $this->form_validation->error_array();	
 						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
-			}
-    }
+	}
+}
     
     /**
      * User Signup API
@@ -73,7 +86,7 @@ class User extends REST_Controller {
 			);
 			$result = $this->user_model->signup_user($insert);
 						if ($result) {
-							$user = $this->user_model->get_row(array('id' => $result), array('first_name', 'last_name' ,'id','email','username'));
+							$user = $this->user_model->get_row(array('id' => $result), array('first_name', 'last_name','email','username'));
 							$response['status']['status'] = $this->lang->line('success_status');
 							$response['status']['status_code'] = $this->lang->line('code_201');
 							$response['message'] = $this->lang->line('register_successfull');
@@ -176,21 +189,32 @@ class User extends REST_Controller {
 					);
 			$context = stream_context_create($opts);
 			$json = file_get_contents($url, false, $context);
-			$response = json_decode($json, TRUE);
-			
-				if(isset($response['id'])){
+			$json_response = json_decode($json, TRUE);
+				if(isset($json_response['id'])){
 					$get_user = $this->user_model->get_row(array('uid' => $this->post('uid')), array('first_name', 'last_name' ,'id','uid'));
-						if(!empty($get_user)){	 
+						if(!empty($get_user)){
 							$token['id'] = $get_user['id'];
 							$token['uid'] = $get_user['uid'];
 							$date = new DateTime();
 							$token['iat'] = $date->getTimestamp();
-							$output['status']['status'] = $this->lang->line('success_status');
-							$output['status']['status_code'] = $this->lang->line('code_200');
-							$output['message'] =  $this->lang->line('login_successfull');
-							$output['response']['data'] = $get_user;
-							$output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
-							$this->set_response($output, REST_Controller::HTTP_OK);	
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('login_successfull');
+							$subscription = $this->user_model->check_subscription($get_user['id']);
+							if(!empty($subscription)){
+								  $end_date = $subscription['end_date'];
+								  $current_date = date('Y-m-d H:i:s');
+								  if($end_date < $current_date){
+										$update_subscription = $this->user_model->update_usersubscription(array('status' => '0'), array('id' => $subscription['id']));
+										$subscription = $this->user_model->check_subscription($get_user['id']);
+								  }
+								$response['response']['data'] = array_merge($subscription,$get_user);
+							}else{
+								$response['response']['data'] = $get_user;
+								$response['response']['data']['status'] = '0';
+							}
+							$response['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
+							$this->set_response($response, REST_Controller::HTTP_OK);	
 					 
 						}else{
 							$insert = array(
@@ -209,12 +233,13 @@ class User extends REST_Controller {
 									$token['uid'] = $user['uid'];
 									$date = new DateTime();
 									$token['iat'] = $date->getTimestamp();
-									$output['status']['status'] = $this->lang->line('success_status');
-									$output['status']['status_code'] = $this->lang->line('code_200');
-									$output['message'] =  $this->lang->line('login_successfull');
-									$output['response']['data'] = $user;
-									$output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
-									$this->set_response($output, REST_Controller::HTTP_OK);	
+									$response['status']['status'] = $this->lang->line('success_status');
+									$response['status']['status_code'] = $this->lang->line('code_200');
+									$response['message'] =  $this->lang->line('login_successfull');
+									$response['response']['data'] = $user;
+									$response['response']['data']['status'] = '0';
+									$response['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
+									$this->set_response($response, REST_Controller::HTTP_OK);	
 								} else {
 									$response['status']['status'] = $this->lang->line('failure_status');
 									$response['status']['status_code'] = $this->lang->line('code_401');
@@ -251,7 +276,19 @@ class User extends REST_Controller {
                             $output['status']['status'] = $this->lang->line('success_status');
                             $output['status']['status_code'] = $this->lang->line('code_200');
                             $output['message'] =  $this->lang->line('login_successfull');
-                            $output['response']['data'] = $get_user;
+                            $subscription = $this->user_model->check_subscription($get_user['id']);
+							if(!empty($subscription)){
+								  $end_date = $subscription['end_date'];
+								  $current_date = date('Y-m-d H:i:s');
+								  if($end_date < $current_date){
+										$update_subscription = $this->user_model->update_usersubscription(array('status' => '0'), array('id' => $subscription['id']));
+										$subscription = $this->user_model->check_subscription($get_user['id']);
+								  }
+								$output['response']['data'] = array_merge($subscription,$get_user);
+							}else{
+								$output['response']['data'] = $get_user;
+								$output['response']['data']['status'] = '0';
+							}
                             $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                     }else{
@@ -265,13 +302,13 @@ class User extends REST_Controller {
                                 $user = $this->user_model->get_row(array('username' => $this->post('username')), array('first_name', 'last_name' ,'id','username'));
                                     if(!empty($user)){     
                                         $token['id'] = $user['id'];
-                                        $token['uid'] = $user['uid'];
                                         $date = new DateTime();
                                         $token['iat'] = $date->getTimestamp();
                                         $output['status']['status'] = $this->lang->line('success_status');
                                         $output['status']['status_code'] = $this->lang->line('code_200');
                                         $output['message'] =  $this->lang->line('login_successfull');
                                         $output['response']['data'] = $user;
+                                        $output['response']['data']['status'] = '0';
                                         $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                                         $this->set_response($output, REST_Controller::HTTP_OK);   
                                     } else {
@@ -309,9 +346,9 @@ class User extends REST_Controller {
                 );
                 $context = stream_context_create($opts);
                 $json = file_get_contents($url, false, $context);
-                $response = json_decode($json, TRUE);
-                if(isset($response['id'])){
-                    $get_user = $this->user_model->get_row(array('uid' => $response['id']), array('first_name', 'last_name' ,'id','uid'));
+                $json_response = json_decode($json, TRUE);
+                if(isset($json_response['id'])){
+                    $get_user = $this->user_model->get_row(array('uid' => $json_response['id']), array('first_name', 'last_name' ,'id','uid'));
                         if(!empty($get_user)){     
                             $token['id'] = $get_user['id'];
                             $token['uid'] = $get_user['uid'];
@@ -320,7 +357,19 @@ class User extends REST_Controller {
                             $output['status']['status'] = $this->lang->line('success_status');
                             $output['status']['status_code'] = $this->lang->line('code_200');
                             $output['message'] = $this->lang->line('login_successfull');
-                            $output['response']['data'] = $get_user;
+                            $subscription = $this->user_model->check_subscription($get_user['id']);
+							if(!empty($subscription)){
+								  $end_date = $subscription['end_date'];
+								  $current_date = date('Y-m-d H:i:s');
+								  if($end_date < $current_date){
+										$update_subscription = $this->user_model->update_usersubscription(array('status' => '0'), array('id' => $subscription['id']));
+										$subscription = $this->user_model->check_subscription($get_user['id']);
+								  }
+								$output['response']['data'] = array_merge($subscription,$get_user);
+							}else{
+								$output['response']['data'] = $get_user;
+								$output['response']['data']['status'] = '0';
+							}
                             $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                             $this->set_response($output, REST_Controller::HTTP_OK);   
                      
@@ -345,6 +394,7 @@ class User extends REST_Controller {
                                     $output['status']['status_code'] = $this->lang->line('code_200');
                                     $output['message'] =  $this->lang->line('login_successfull');
                                     $output['response']['data'] = $user;
+                                    $output['response']['data']['status'] = '0';
                                     $output['response']['data']['id_token'] = JWT::encode($token,MY_SECRET_KEY);
                                     $this->set_response($output, REST_Controller::HTTP_OK);   
                                 } else {
@@ -432,7 +482,7 @@ class User extends REST_Controller {
      * Add user subscription
      * URL : http://localhost/workchew/index.php/api/user/add_subscription
      * METHOD: POST
-     * PARAMS: user_id,membership_id,start_date,valid_upto
+     * PARAMS: membership_id,start_date,valid_upto
      * RETURN: Json response 
      */
 	public function add_subscription_post() {
