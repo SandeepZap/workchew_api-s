@@ -107,7 +107,7 @@ class Bussiness_model extends CI_Model {
 			$result['categories'] = $this->db->select('*')->where('business_id', $result['id'])->get('categories')->result_array();
 			$result['reviews'] = $this->db->select('*')->where('businesses_id', $result['id'])->get('bussiness_reviews')->result_array();
 		}
-		$bussiness_data[] = $result;
+		$bussiness_data = $result;
 		return $bussiness_data;
     }
     
