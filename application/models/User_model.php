@@ -74,9 +74,13 @@ class User_model extends CI_Model {
         return $this->db->affected_rows();
     }
     
-    public function get_staticpages($slug){
-		   return $this->db->select('*')->where('slug',$slug)->get('static_pages')->row_array();
-	}
-
+	public function getallusers_subscription() {
+		$this->db->select('us.id AS subscription_id,us.status,us.start_date,us.end_date,us.check_in,u.email,u.device_token,u.first_name,u.last_name,m.name AS membershp_name,m.membership,m.valid_upto,m.price,m.detail');
+		$this->db->from('users_subscription us');
+		$this->db->join('users u', 'u.id = us.user_id', 'INNER');
+		$this->db->join('memberships m', 'm.id = us.membership_id', 'INNER');
+		$query = $this->db->get(); 
+		return $query->result_array();
+    }
 }
 ?>

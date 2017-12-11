@@ -76,12 +76,14 @@ class User extends REST_Controller {
 		 $this->form_validation->set_rules('last_name', 'Last Name', 'required');
 		 $this->form_validation->set_rules('username', 'Username', 'required');
 		 $this->form_validation->set_rules('password', 'Password', 'required');
+		 $this->form_validation->set_rules('device_token', 'Device token', 'required');
 		if ($this->form_validation->run() == true){
 			$insert = array(
 			  'email' => $this->post('email'),
 			  'first_name' => $this->post('first_name'),
 			  'last_name' => $this->post('last_name'),
 			  'username' => $this->post('username'),
+			  'device_token' => $this->post('device_token'),
 			  'password' => md5($this->post('password')),
 			);
 			$result = $this->user_model->signup_user($insert);
@@ -223,6 +225,7 @@ class User extends REST_Controller {
 							  'last_name' => $this->post('last_name'),
 							  'username' => $this->post('username'),
 							  'uid' => $this->post('uid'),
+							  'device_token' => $this->post('device_token'),
 							  'provider' => $this->post('provider')
 							);
 					 $result = $this->user_model->signup_user($insert);
@@ -295,6 +298,7 @@ class User extends REST_Controller {
                             $insert = array(
                               'username' => $this->post('username'),
                               'email' => $this->post('email'),
+                              'device_token' => $this->post('device_token'),
                               'provider' => $this->post('provider')
                             );
                             $result = $this->user_model->signup_user($insert);
@@ -380,6 +384,7 @@ class User extends REST_Controller {
                               'last_name' => $this->post('last_name'),
                               'username' => $this->post('username'),
                               'uid' => $this->post('id'),
+                              'device_token' => $this->post('device_token'),
                               'provider' => $this->post('provider')
                             );
                      $result = $this->user_model->signup_user($insert);
@@ -717,7 +722,6 @@ class User extends REST_Controller {
 						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
 			}
 	  }
-	
 
 }
 ?>
