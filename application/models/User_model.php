@@ -73,6 +73,10 @@ class User_model extends CI_Model {
         $this->db->update('users_subscription', $data, $where);
         return $this->db->affected_rows();
     }
+    
+    public function get_staticpages($slug){
+		   return $this->db->select('*')->where('slug',$slug)->get('static_pages')->row_array();
+	}
 
 }
 ?>

@@ -684,6 +684,40 @@ class User extends REST_Controller {
 		return $headers;
 	}
 	
+		  
+	  /**
+     * Get static pages details
+     * URL : http://localhost/workchew/index.php/api/user/get_staticpages_detail
+     * METHOD: POST
+     * PARAMS: slug (privacy-policy,terms-conditions)
+     * RETURN: Json response 
+     */
+	 
+	  public function get_staticpages_detail_post(){
+		  $this->form_validation->set_rules('slug', 'Slug', 'required');
+		   if ($this->form_validation->run()) {
+				$slug = $this->post('slug');
+				 $static_pages = $this->user_model->get_staticpages($slug);
+					 if(!empty($static_pages)){
+							$response['status']['status'] = $this->lang->line('success_status');
+							$response['status']['status_code'] = $this->lang->line('code_200');
+							$response['message'] =  $this->lang->line('success_status');
+							$response['response']['data'] = $static_pages;
+							$this->set_response($response, REST_Controller::HTTP_OK);   
+					 }else{
+							$response['status']['status'] = $this->lang->line('failure_status');
+							$response['status']['status_code'] = $this->lang->line('code_400');
+							$response['message'] = $this->lang->line('record_not_found');
+							$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+					 }
+		   }else{
+					 	$response['status']['status'] = $this->lang->line('failure_status');
+                        $response['status']['status_code'] = $this->lang->line('code_422');
+                        $response['message']["data"] = $this->form_validation->error_array();	
+						$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+			}
+	  }
+	
 
 }
 ?>
