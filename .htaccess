@@ -1,15 +1,4 @@
-<IfModule mod_rewrite.c>
-
- RewriteEngine on
- RewriteCond %{REQUEST_FILENAME} !-f
- RewriteCond %{REQUEST_FILENAME} !-d
-
- <IfModule mod_php5.c>
-     RewriteRule ^(.*)$ index.php/$1 [L]
- </IfModule>
-
- <IfModule !mod_php5.c>
-     RewriteRule ^(.*)$ index.php?/$1 [L]
- </IfModule>
- 
-</IfModule>
+RewriteEngine on
+RewriteBase /
+RewriteCond $1 !^(index\.php|js|css|demo|robots\.txt|assets|uploads)
+RewriteRule ^(.*)$ index.php/$1 [L]
