@@ -72,12 +72,13 @@ class User extends REST_Controller {
      */
 	public function signup_post() {
 		 $this->form_validation->set_rules('email', 'Email',  'required|valid_email|is_unique[users.email]');
+		 $this->form_validation->set_message('is_unique', 'The email address you have entered is already registered.');
 		 $this->form_validation->set_rules('first_name', 'First Name', 'required');
 		 $this->form_validation->set_rules('last_name', 'Last Name', 'required');
 		 $this->form_validation->set_rules('username', 'Username', 'required');
 		 $this->form_validation->set_rules('password', 'Password', 'required');
 		 $this->form_validation->set_rules('device_token', 'Device token', 'required');
-		if ($this->form_validation->run() == true){
+		if ($this->form_validation->run()){
 			$insert = array(
 			  'email' => $this->post('email'),
 			  'first_name' => $this->post('first_name'),
@@ -89,12 +90,14 @@ class User extends REST_Controller {
 			$result = $this->user_model->signup_user($insert);
 						if ($result) {
 							$user = $this->user_model->get_row(array('id' => $result), array('first_name', 'last_name','email','username'));
+							$this->load->library('common');
+                       if($this->common->send_mail($this->post('email'), 'Workchew: Signup Successfully ', 'signup-email', $insert, 'email')){
 							$response['status']['status'] = $this->lang->line('success_status');
 							$response['status']['status_code'] = $this->lang->line('code_201');
 							$response['message'] = $this->lang->line('register_successfull');
 							$response['response']['data'] = $user;
 							$this->set_response($response, REST_Controller::HTTP_CREATED);	
-						}else{
+						}}else{
 							$response ['status']['status'] = $this->lang->line('failure_status');
 							$response['status']['status_code'] = $this->lang->line('code_500');
 							$response['message'] = $this->lang->line('Internal_server_error');
