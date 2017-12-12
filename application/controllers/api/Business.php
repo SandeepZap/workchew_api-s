@@ -35,7 +35,7 @@ class Business extends REST_Controller {
 
     /**
      * Get Business from yelp and save into database
-     * URL : http://localhost/workchew/index.php/api/business/get_bussiness
+     * URL : http://localhost/workchew/api/business/get_bussiness
      * METHOD: POST
      * PARAMS: location
      * RETURN: Json response 
@@ -106,7 +106,7 @@ class Business extends REST_Controller {
 	 
 	  /**
      * Get Business from database according to location
-     * URL : http://localhost/workchew/index.php/api/business/get_bussiness_Bylocation
+     * URL : http://localhost/workchew/api/business/get_bussiness_Bylocation
      * METHOD: POST
      * PARAMS: location,log,lat,limit,page
      * RETURN: Json response 
@@ -144,7 +144,7 @@ class Business extends REST_Controller {
 	  
 	   /**
      * Get Business from database according to businessid
-     * URL : http://localhost/workchew/index.php/api/business/get_bussiness_detail
+     * URL : http://localhost/workchew/api/business/get_bussiness_detail
      * METHOD: POST
      * PARAMS: businesses_id
      * RETURN: Json response 
@@ -177,7 +177,7 @@ class Business extends REST_Controller {
 	  
 	   /**
      * search Business from database according to name
-     * URL : http://localhost/workchew/index.php/api/business/get_bussiness_byname
+     * URL : http://localhost/workchew/api/business/get_bussiness_byname
      * METHOD: POST
      * PARAMS: name,limit,page
      * RETURN: Json response 

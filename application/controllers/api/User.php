@@ -12,7 +12,7 @@ class User extends REST_Controller {
 
     /**
      * User Login API
-     * URL : http://localhost/workchew/index.php/api/user/login
+     * URL : http://localhost/workchew/api/user/login
      * METHOD: POST
      * PARAMS: email, password
      * RETURN: Json response 
@@ -65,7 +65,7 @@ class User extends REST_Controller {
     
     /**
      * User Signup API
-     * URL : http://localhost/workchew/index.php/api/user/signup
+     * URL : http://localhost/workchew/api/user/signup
      * METHOD: POST
      * PARAMS: email, password, first_name ,last_name , username 
      * RETURN: Json response 
@@ -113,7 +113,7 @@ class User extends REST_Controller {
 	
 	 /**
      * User Forgot Password API
-     * URL : http://localhost/workchew/index.php/api/user/forgot_password
+     * URL : http://localhost/workchew/api/user/forgot_password
      * METHOD: POST
      * PARAMS: email
      * RETURN: Json response. Send password in mail 
@@ -173,7 +173,7 @@ class User extends REST_Controller {
 	
 	/**
      * User Login using social API
-     * URL : http://localhost/workchew/index.php/api/user/social_login
+     * URL : http://localhost/workchew/api/user/social_login
      * METHOD: POST
      * PARAMS: provider (facebook- uid,access_token | LinkedIn- access_token | Twitter- username)
      * RETURN: Json response
@@ -437,7 +437,7 @@ class User extends REST_Controller {
 		
 	/**
      * User Change Password API
-     * URL : http://localhost/workchew/index.php/api/user/change_password
+     * URL : http://localhost/workchew/api/user/change_password
      * METHOD: POST
      * PARAMS: email,id,new_password
      * RETURN: Json response.
@@ -488,7 +488,7 @@ class User extends REST_Controller {
 	
 	/**
      * Add user subscription
-     * URL : http://localhost/workchew/index.php/api/user/add_subscription
+     * URL : http://localhost/workchew/api/user/add_subscription
      * METHOD: POST
      * PARAMS: membership_id,start_date,valid_upto
      * RETURN: Json response 
@@ -554,7 +554,7 @@ class User extends REST_Controller {
 	
 	  /**
      * Get all users's subscription 
-     * URL : http://localhost/workchew/index.php/api/user/get_user_subscription
+     * URL : http://localhost/workchew/api/user/get_user_subscription
      * METHOD: POST
      * PARAMS: user_id,limit,page
      * RETURN: Json response 
@@ -597,7 +597,7 @@ class User extends REST_Controller {
 	  
 	  /**
      * Get user subscription detail
-     * URL : http://localhost/workchew/index.php/api/user/get_subscription_detail
+     * URL : http://localhost/workchew/api/user/get_subscription_detail
      * METHOD: POST
      * PARAMS: suscription_id
      * RETURN: Json response 
@@ -630,7 +630,7 @@ class User extends REST_Controller {
 	  
 	 /**
      * check user subscription status
-     * URL : http://localhost/workchew/index.php/api/user/check_usersubscription
+     * URL : http://localhost/workchew/api/user/check_usersubscription
      * METHOD: POST
      * PARAMS: Headers token 
      * RETURN: Json response 
@@ -695,7 +695,7 @@ class User extends REST_Controller {
 		  
 	  /**
      * Get static pages details
-     * URL : http://localhost/workchew/index.php/api/user/get_staticpages_detail
+     * URL : http://localhost/workchew/api/user/get_staticpages_detail
      * METHOD: POST
      * PARAMS: slug (privacy-policy,terms-conditions)
      * RETURN: Json response 

@@ -11,7 +11,7 @@ class Membership extends REST_Controller {
 
     /**
      * Get memership data by membership name
-     * URL : http://localhost/workchew/index.php/api/membership/get_membership_byname
+     * URL : http://localhost/workchew/api/membership/get_membership_byname
      * METHOD: POST
      * PARAMS: membership
      * RETURN: Json response 
@@ -43,7 +43,7 @@ class Membership extends REST_Controller {
     
     /**
      * Get all memberships
-     * URL : http://localhost/workchew/index.php/api/membership/getall_membership
+     * URL : http://localhost/workchew/api/membership/getall_membership
      * METHOD: GET
      * RETURN: Json response 
      */

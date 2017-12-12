@@ -23,7 +23,7 @@ class Cron extends CI_Controller {
 
   /**
      * Get static pages details
-     * URL : http://localhost/workchew/index.php/api/user/notification_cron_job
+     * URL : http://localhost/workchew/api/user/notification_cron_job
      * METHOD: GET
      * PARAMS: slug (privacy-policy,terms-conditions)
      * RETURN: Json response 
