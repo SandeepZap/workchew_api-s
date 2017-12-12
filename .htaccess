@@ -1,7 +1,4 @@
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  #RewriteBase /
-
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteRule ^ index.php [QSA,L]
-</IfModule>
+RewriteEngine on
+RewriteBase /
+RewriteCond $1 !^(index\.php|js|css|demo|robots\.txt|assets|uploads)
+RewriteRule ^(.*)$ index.php/$1 [L]
