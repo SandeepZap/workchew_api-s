@@ -91,7 +91,7 @@ class User extends REST_Controller {
 						if ($result) {
 							$user = $this->user_model->get_row(array('id' => $result), array('first_name', 'last_name','email','username'));
 							$this->load->library('common');
-                       if($this->common->send_mail($this->post('email'), 'Workchew: Signup Successfully ', 'signup-email', $insert, 'email')){
+                       if($this->common->send_mail($this->post('email'), 'Welcome to Workchew', 'signup-email', $insert, 'email')){
 							$response['status']['status'] = $this->lang->line('success_status');
 							$response['status']['status_code'] = $this->lang->line('code_201');
 							$response['message'] = $this->lang->line('register_successfull');
