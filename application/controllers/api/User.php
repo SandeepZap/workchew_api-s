@@ -692,8 +692,67 @@ class User extends REST_Controller {
 		return $headers;
 	}
 	
-		  
-	  /**
+	
+	/**
+     * check user checkIN
+     * URL : http://localhost/workchew/api/user/check_usercheckin
+     * METHOD: POST
+     * PARAMS: Headers token,business_id 
+     * RETURN: Json response 
+     */
+	  
+	    public function check_usercheckin_post(){
+		$headers = $this->get_headers();
+		if(isset($headers['token'])){
+		$output = JWT::decode($headers['token'],MY_SECRET_KEY, array('HS256'));
+		$decoded_array = (array) $output;
+          if(isset($decoded_array['id'])){
+			  $user_id = $decoded_array['id'];
+			  $business_id = $this->post('business_id');
+			  $current_date = date('Y-m-d H:i:s');
+			  $this->form_validation->set_rules('business_id', 'Business', 'required');
+			if ($this->form_validation->run() == true){
+				$insert = array(
+							  'user_id' => $user_id,
+							  'business_id' => $business_id,
+							  'checkin_date' => $current_date
+							);
+				$id = $this->user_model->adduser_checkin($insert);
+				if ($id) {
+					$user = $this->user_model->getuser_checkin_detail($id);
+					$response['status']['status'] = $this->lang->line('success_status');
+					$response['status']['status_code'] = $this->lang->line('code_201');
+					$response['message'] = $this->lang->line('success_status');
+					$response['response']['data'] = $user;
+					$this->set_response($response, REST_Controller::HTTP_CREATED);	
+				}else{
+					$response ['status']['status'] = $this->lang->line('failure_status');
+					$response['status']['status_code'] = $this->lang->line('code_500');
+					$response['message'] = $this->lang->line('Internal_server_error');
+					$this->set_response($response, REST_Controller::HTTP_INTERNAL_SERVER_ERROR);	
+				}		
+			}else{
+				$response ['status']['status'] = $this->lang->line('failure_status');
+				$response['status']['status_code'] = $this->lang->line('code_422');
+				$response['message']['data'] = $this->form_validation->error_array();	
+				$this->set_response($response, REST_Controller::HTTP_UNPROCESSABLE_ENTITY);	
+			}
+			}else{
+			
+				$response['status']['status'] = $this->lang->line('failure_status');
+				$response['status']['status_code'] = $this->lang->line('code_400');
+				$response['message'] = $this->lang->line('Not_found');
+				$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+		  }
+		}else{
+				$response['status']['status'] = $this->lang->line('failure_status');
+				$response['status']['status_code'] = $this->lang->line('code_400');
+				$response['message'] = $this->lang->line('token_not_found');
+				$this->set_response($response, REST_Controller::HTTP_BAD_REQUEST);
+		}	
+	}
+			
+	 /**
      * Get static pages details
      * URL : http://localhost/workchew/api/user/get_staticpages_detail
      * METHOD: POST
