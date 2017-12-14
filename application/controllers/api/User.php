@@ -455,7 +455,8 @@ class User extends REST_Controller {
                                 $passwordplain = $this->post('new_password');
 								$newpass = md5($passwordplain);
                         $saved = $this->user_model->update(array(
-                            'password' => $newpass
+                            'password' => $newpass,
+                            'updated_at' =>  date('Y-m-d H:i:s')
                                 ), array('email' =>  $this->post('email'),'id' => $this->post('id')));
                         if ($saved) {
 								$response['status']['status'] = $this->lang->line('success_status');
@@ -490,7 +491,7 @@ class User extends REST_Controller {
      * Add user subscription
      * URL : http://localhost/workchew/api/user/add_subscription
      * METHOD: POST
-     * PARAMS: membership_id,start_date,valid_upto
+     * PARAMS: membership_id,valid_upto
      * RETURN: Json response 
      */
 	public function add_subscription_post() {
